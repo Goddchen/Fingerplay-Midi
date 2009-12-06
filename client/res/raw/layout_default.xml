@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout screenWidth="480" screenHeight="320">
+
+	<screen x="0" y="0" width="480" height="320">
+		<xypad x="16" y="68" width="184" height="184" />
+		<xypad x="216" y="68" width="184" height="184" />
+	</screen>
+
+	<screen x="0" y="320" width="480" height="320">
+		<slider x="20" y="16" width="72" height="288" />
+		<slider x="120" y="16" width="72" height="288" />
+		<slider x="224" y="16" width="72" height="288" />
+		<slider x="328" y="16" width="72" height="288" />
+	</screen>
+
+	<screen x="0" y="640" width="480" height="320">
+		<pad x="64" y="16" width="60" height="60" />
+		<pad x="140" y="16" width="60" height="60" />
+		<pad x="216" y="16" width="60" height="60" />
+		<pad x="292" y="16" width="60" height="60" />
+
+		<pad x="64" y="92" width="60" height="60" />
+		<pad x="140" y="92" width="60" height="60" />
+		<pad x="216" y="92" width="60" height="60" />
+		<pad x="292" y="92" width="60" height="60" />
+
+		<pad x="64" y="168" width="60" height="60" />
+		<pad x="140" y="168" width="60" height="60" />
+		<pad x="216" y="168" width="60" height="60" />
+		<pad x="292" y="168" width="60" height="60" />
+
+		<pad x="64" y="244" width="60" height="60" />
+		<pad x="140" y="244" width="60" height="60" />
+		<pad x="216" y="244" width="60" height="60" />
+		<pad x="292" y="244" width="60" height="60" />
+	</screen>
+</layout>

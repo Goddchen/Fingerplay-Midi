@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">  
+
+    <PreferenceCategory android:title="Server Connection">
+		<ListPreference
+			android:key="settings_server_type"
+			android:title="Server Type"
+			android:summary="Select which type of server to connect to."
+			android:dialogTitle="Select a Server Type"
+			android:entries="@array/server_types"
+			android:entryValues="@array/server_type_values"
+		/><!-- 
+        <CheckBoxPreference  
+            android:key="settings_detect_server_address"  
+            android:title="Detect Server Address"  
+            android:summary=""  
+        /> -->
+		<EditTextPreference
+			android:key="settings_server_address"  
+			android:title="Server Address"  
+			android:summary="Set the server address"  
+			android:dialogTitle="Server Address"  
+		/>
+        <CheckBoxPreference  
+            android:key="settings_server_connect"  
+            android:title="Connect to Server"  
+            android:summary="Connects to the specified server."  
+        />
+	</PreferenceCategory>
+
+    <PreferenceCategory android:title="Layout">
+		<ListPreference
+			android:key="settings_layout_file"
+			android:title="Layout"
+			android:summary="Select MIDI controllers layout."
+			android:dialogTitle="Select a layout file"
+		/>
+	</PreferenceCategory>
+
+    <PreferenceCategory android:title="MIDI">
+            <ListPreference  
+                android:key="settings_midi_out"
+                android:title="MIDI Out Device"
+                android:summary="Select a device."
+                android:dialogTitle="Select a MIDI Device"  
+            /><!-- 
+            <CheckBoxPreference  
+                android:key="pref_use_sensors"  
+                android:title="Use Sensors"  
+                android:summary="Sends sensor MIDI messages if enabled."  
+            />-->
+        <PreferenceScreen
+        	android:key="settings_midi_controllers"
+            android:title="Configure MIDI Controllers"  
+            android:summary="Send MIDI messages to the server."
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+	</PreferenceCategory>
+
+</PreferenceScreen>
