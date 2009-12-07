@@ -1,9 +1,12 @@
 <project default="jar">
+	<!--
 	<taskdef name="jsmoothgen"
 	     classname="net.charabia.jsmoothgen.ant.JSmoothGen"
 	     classpath="jsmooth/jsmoothgen-ant.jar"/>
+	-->
 
 	<target name="jar">
+		<mkdir dir="bin/"/>
 		<copy file="lib/FingerPlayCommon/FingerPlayCommon.jar" todir="bin/" />
         <jar destfile="bin/FingerPlayServer.jar" basedir="build/">
             <manifest>
@@ -11,11 +14,13 @@
                 <attribute name="Class-Path" value="FingerPlayCommon.jar" />
             </manifest>
         </jar>
+		<!--
 		<jsmoothgen project="jsmooth/jsmooth.jsmooth" skeletonroot="jsmooth/skeletons"/>
-		 <zip destfile="bin/FingerPlayServer.zip"
-		       basedir="bin/"
-		       excludes="*.zip,version.txt,*.exe"
-		  />
+		-->
+		<zip destfile="bin/FingerPlayServer.zip"
+			basedir="bin/"
+			excludes="*.zip,version.txt,*.exe"
+		/>
 	</target>
 
 </project>

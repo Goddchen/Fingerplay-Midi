@@ -1,11 +1,6 @@
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
 
 import com.flat20.fingerplay.Midi;
 import com.flat20.fingerplay.socket.ClientSocketThread;
@@ -43,8 +38,8 @@ public class FingerPlayServer implements Runnable{
 
 			// 
 			SocketStringCommand sm = new SetMidiDeviceCommand("apa");
-			
-			
+
+
  			// Open MIDI Device.
 
 			midi = new Midi();
