@@ -1,5 +1,6 @@
-<project name="simpleCompile" default="compile" basedir=".">
-	<target name="compile">
-		<jar destfile="libs/FingerPlayCommon.jar" basedir="bin/" />
+<project default="jar" basedir=".">
+	<target name="jar">
+		<mkdir dir="bin/"/>
+		<jar destfile="bin/FingerPlayCommon.jar" basedir="build/" />
 	</target>
 </project>
