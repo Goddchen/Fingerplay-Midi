@@ -31,8 +31,9 @@ public class Slide extends Animation {
 
 	@Override
 	public boolean update() {
-		mFixedCurrentX += (mFixedDestX - mFixedCurrentX) >> 2;
-		mFixedCurrentY += (mFixedDestY - mFixedCurrentY) >> 2;
+		// mul needs to be shifted back from <<32 to <<16
+		mFixedCurrentX += (mFixedDestX - mFixedCurrentX) >> 3;
+		mFixedCurrentY += (mFixedDestY - mFixedCurrentY) >> 3;
 		mSprite.x = mFixedCurrentX >> 16;
 		mSprite.y = mFixedCurrentY >> 16;
 		return (++timer < 30);

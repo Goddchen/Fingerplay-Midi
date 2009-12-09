@@ -18,9 +18,7 @@ import com.flat20.gui.NavigationButtons;
 import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Slide;
 import com.flat20.gui.sprites.Logo;
-import com.flat20.gui.widgets.MidiWidget;
-import com.flat20.gui.widgets.Widget;
-import com.flat20.gui.widgets.WidgetContainer;
+import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.flat20.gui.LayoutManager;
 
 public class FingerPlayActivity extends InteractiveActivity {
@@ -29,7 +27,7 @@ public class FingerPlayActivity extends InteractiveActivity {
 
     private MidiControllerManager mMidiControllerManager;
 
-    private WidgetContainer mMidiWidgetsContainer;
+    private MidiWidgetContainer mMidiWidgetsContainer;
     
     private Logo mLogo;
 
@@ -47,14 +45,8 @@ public class FingerPlayActivity extends InteractiveActivity {
 		mSettingsModel.init(this);
 
 		mMidiControllerManager = MidiControllerManager.getInstance();        
-/*
-        //TODO Put this in settings?
-        SharedPreferences mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int connectionType = Integer.parseInt( mSharedPreferences.getString("settings_server_type", "-1") );
-        if (connectionType != -1)
-        	ConnectionManager.getInstance().setConnection( connectionType );
-*/
-        super.onCreate(savedInstanceState);
+
+		super.onCreate(savedInstanceState);
 
         Runtime r = Runtime.getRuntime();
         r.gc();
@@ -83,7 +75,8 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         // We're drawing all controller screens in their own container so we can move them
         // separately from the navigation and the background.
-        mMidiWidgetsContainer = new WidgetContainer(mWidth, 320+320+320); // 3 screens high should be dynamic.
+        // MidiWidgetContainer calculates its height depending on the content added.
+        mMidiWidgetsContainer = new MidiWidgetContainer(mWidth, mHeight);
 
         // TODO Make LayoutManager part of GUI lib
         //File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/layout.xml");
@@ -105,17 +98,7 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// Bit of a hack. mMidiWidgetContainer could derive from WidgetContainer
-		// and do this code internally.
-		Widget widget = mMidiWidgetsContainer.getFocusedWidget();
-		if (widget instanceof WidgetContainer) {
-			WidgetContainer wc = (WidgetContainer) widget;
-			if (wc.getFocusedWidget() instanceof MidiWidget) {
-				MidiWidget mw = (MidiWidget)wc.getFocusedWidget();
-				mw.setHold( !mw.isHolding() );
-				//mNavigationButtons.setReleaseAllActive(true);
-			}
-		}
+		mMidiWidgetsContainer.onKeyDown(keyCode, event);
 		return super.onKeyDown(keyCode, event);
 	}
 

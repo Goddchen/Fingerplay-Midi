@@ -1,6 +1,5 @@
 package com.flat20.gui;
 
-
 import java.io.File;
 import java.io.InputStream;
 
@@ -18,6 +17,12 @@ import com.flat20.gui.widgets.Widget;
 import com.flat20.gui.widgets.WidgetContainer;
 import com.flat20.gui.widgets.XYPad;
 
+/**
+ * TODO Move to GUI project.
+ * 
+ * @author andreas
+ *
+ */
 public class LayoutManager {
 
 	final public static void loadXML(WidgetContainer mainContainer, InputStream xmlStream, int width, int height) {
