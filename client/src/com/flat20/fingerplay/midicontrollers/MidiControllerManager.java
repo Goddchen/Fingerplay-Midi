@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 
 import java.util.Set;
 
+import android.util.Log;
+
 import com.flat20.fingerplay.network.ConnectionManager;
 import com.flat20.fingerplay.socket.commands.MidiControlChangeSocketCommand;
 import com.flat20.fingerplay.socket.commands.MidiNoteOffSocketCommand;
@@ -30,6 +32,7 @@ public class MidiControllerManager {
 	}
 
 	private MidiControllerManager() {
+		mConnectionManager.addConnectionListener(mConnectionListener);
 	}
 
     public void addMidiController(IMidiController midiController) {
@@ -114,5 +117,24 @@ public class MidiControllerManager {
     	}
 
     };
+    
+    private ConnectionManager.IConnectionListener mConnectionListener = new ConnectionManager.IConnectionListener() {
+
+    	public void onConnect() {
+    	}
+
+    	public void onDisconnect() {
+    	}
+
+    	public void onError(String errorMessage) {
+    	}
+
+    	public void onSocketCommand(SocketCommand sm) {
+			if (sm.command == SocketCommand.COMMAND_MIDI_SHORT_MESSAGE) {
+				Log.i("mcm", "server sent");
+			}
+    	}
+    };
+
 
 }

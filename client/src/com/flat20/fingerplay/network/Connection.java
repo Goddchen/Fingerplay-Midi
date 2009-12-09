@@ -26,7 +26,7 @@ public abstract class Connection {
 		
 	}
 
-	// TODO Connections should override send and not write like OSCConnection does.
+	// TODO Connections should override send() and not write() like OSCConnection does.
 	public void send(SocketCommand command) {
 		write(command.data);
 	}
