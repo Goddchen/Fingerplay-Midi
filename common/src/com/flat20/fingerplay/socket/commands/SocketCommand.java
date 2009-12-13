@@ -1,12 +1,13 @@
 package com.flat20.fingerplay.socket.commands;
 
 public class SocketCommand {
+
 	// Standard MIDI 4 byte message.
 	public final static byte COMMAND_MIDI_SHORT_MESSAGE = 0x01;
-	
+
 	// Client tells the server which channel he'll be using.
 	public final static byte COMMAND_SET_CONTROL_CHANGE_CHANNEL = 0x02;
-	
+
 	// Client asks for a list of MIDI devices.
 	public final static byte COMMAND_REQUEST_MIDI_DEVICE_LIST = 0x03; 
 
@@ -19,9 +20,20 @@ public class SocketCommand {
 	// Client tells server if a control needs smoothing.
 	public final static byte COMMAND_SET_SMOOTHING = 0x06; 
 
-	public byte command;
-	public byte[] data; //First byte contains the command;
+	// Client tells server if a control needs smoothing.
+	public final static byte COMMAND_VERSION = 0x07; 
 
+	public byte command;
+	//public byte[] data; //First byte contains the command;
+
+	public SocketCommand() {
+		
+	}
+
+	public SocketCommand(byte command) {
+		this.command = command;
+	}
+/*
 	// Create a command from incoming data.
 	public SocketCommand(byte[] data) {
 		this.command = data[0];
@@ -40,7 +52,11 @@ public class SocketCommand {
 		this.data = new byte[1];
 		this.data[0] = this.command;
 	}
-
+*/
+	/*
+	public void encode() {
+	}*/
+/*
 	public byte[] copyParameters() {
 		byte[] parameters = new byte[data.length-1];
 		System.arraycopy(data, 1, parameters, 0, data.length-1);
@@ -57,4 +73,5 @@ public class SocketCommand {
 		byte[] parameters = copyParameters(dataLength);
 		return new String(parameters);
 	}
+*/
 }
