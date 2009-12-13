@@ -21,14 +21,12 @@ public abstract class Connection {
 	public boolean isConnected() {
 		return false;
 	}
-
-	protected void write(byte[] data) {
+/*
+	private void write(byte[] data) {
 		
 	}
-
-	// TODO Connections should override send() and not write() like OSCConnection does.
-	public void send(SocketCommand command) {
-		write(command.data);
+*/
+	public void send(SocketCommand socketCommand) {
 	}
 
 	protected OnUpdateListener listener;
@@ -38,7 +36,8 @@ public abstract class Connection {
 
     public interface OnUpdateListener {
         void onDisconnect();
-        void onRead(byte[] data, int length);
+        void onSocketCommand(SocketCommand socketCommand);
+        //void onRead(byte[] data, int length);
     }
 
 }

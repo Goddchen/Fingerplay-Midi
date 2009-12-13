@@ -1,8 +1,10 @@
 package com.flat20.fingerplay.network;
 
+
 import java.net.ConnectException;
 import java.net.InetAddress;
 
+import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPacket;
@@ -51,19 +53,35 @@ public class OSCConnection extends Connection {
 	}
 
 	@Override
+	public void send(SocketCommand sm) {
+		if (sm.command == SocketCommand.COMMAND_MIDI_SHORT_MESSAGE) {
+			MidiSocketCommand msc = (MidiSocketCommand) sm;
+			Object args[] = new Object[1];
+			args[0] = new Integer(msc.data2);
+			OSCMessage msg = new OSCMessage("/fingerplay/control/" + msc.data1, args);
+	    	try {
+	    		sender.send((OSCPacket)msg);
+	    	} catch (Exception e) {
+	    		Log.i("osc", "Couldn't send");
+	    	}
+		}
+	}
+
+	/*
+	Object args[] = new Object[4];
+	args[0] = new Integer(data[1]); //command
+	args[1] = new Integer(data[2]); //channel
+	args[2] = new Integer(data[3]); //data1
+	args[3] = new Integer(data[4]); //data2
+	OSCMessage msg = new OSCMessage("/fingerplay", args);
+	*/
+/*
+	@Override
 	protected void write(byte[] data) {
 		if (data[0] == SocketCommand.COMMAND_MIDI_SHORT_MESSAGE) {
 			Object args[] = new Object[1];
 			args[0] = new Integer(data[4]);
 			OSCMessage msg = new OSCMessage("/fingerplay/control/" + data[3], args);
-			/*
-	    	Object args[] = new Object[4];
-	    	args[0] = new Integer(data[1]); //command
-	    	args[1] = new Integer(data[2]); //channel
-	    	args[2] = new Integer(data[3]); //data1
-	    	args[3] = new Integer(data[4]); //data2
-	    	OSCMessage msg = new OSCMessage("/fingerplay", args);
-	    	*/
 	    	try {
 	    		sender.send((OSCPacket)msg);
 	    	} catch (Exception e) {
@@ -72,15 +90,8 @@ public class OSCConnection extends Connection {
 		} else {
 			//Log.i("OSCConnection", "Can't send this to osc?");
 		}
-		/*
-		try {
-			c.send( new OSCMessage( "/notify", new Object[] { new Integer( 1 )}));
-		}
-		catch( IOException e3 ) {
-			e3.printStackTrace();
-		}*/
 	}
-
+*/
 	public void disconnect() {
 		sender.close();
 		sender = null;

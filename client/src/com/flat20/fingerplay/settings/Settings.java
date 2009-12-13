@@ -14,15 +14,18 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.flat20.fingerplay.R;
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.Parameter;
 import com.flat20.fingerplay.network.ConnectionManager;
-import com.flat20.fingerplay.socket.commands.MidiControlChangeSocketCommand;
-import com.flat20.fingerplay.socket.commands.SetMidiDeviceCommand;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
+import com.flat20.fingerplay.socket.commands.misc.RequestMidiDeviceList;
+import com.flat20.fingerplay.socket.commands.SocketStringCommand;
+import com.flat20.fingerplay.socket.commands.misc.SetMidiDevice;
+import com.flat20.fingerplay.socket.commands.midi.MidiControlChange;
 
 /**
  * Settings uses a simple MVC pattern. View redraws _everything_ when the model sends
@@ -113,10 +116,10 @@ public class Settings extends PreferenceActivity implements IController {
     		IMidiController mc = mModel.midiControllerManager.getMidiControllerByName(mcName);
     		if (mc != null) {
 				int ccIndex = (int) mModel.midiControllerManager.getIndex(mc);
-	    		SocketCommand socketCommand = new MidiControlChangeSocketCommand(0, 0, ccIndex + index, 0x7F);
-	    		mConnectionManager.write(socketCommand);
+	    		MidiControlChange socketCommand = new MidiControlChange(0xB0, 0, ccIndex + index, 0x7F);
+	    		mConnectionManager.send(socketCommand);
     		}
-    	
+
     	}
 
     	return true;
@@ -152,7 +155,8 @@ public class Settings extends PreferenceActivity implements IController {
 
     	public void onSocketCommand(SocketCommand sm) {
     		if (sm.command == SocketCommand.COMMAND_MIDI_DEVICE_LIST) {
-    			String[] deviceNames = sm.getParametersAsString(sm.data.length).split("%");
+    			SocketStringCommand ssm = (SocketStringCommand) sm;
+    			String[] deviceNames = ssm.message.split("%");
     			mModel.setMidiDevices(deviceNames);
     			if (mModel.midiDevice != null)
     				setMidiDevice(mModel.midiDevice);
@@ -168,15 +172,15 @@ public class Settings extends PreferenceActivity implements IController {
 
     protected void requestMidiDeviceList() {
     	if (mConnectionManager.isConnected()) {
-    		SocketCommand sm = new SocketCommand(SocketCommand.COMMAND_REQUEST_MIDI_DEVICE_LIST);
-    		mConnectionManager.write(sm);
+    		RequestMidiDeviceList sm = new RequestMidiDeviceList();
+    		mConnectionManager.send(sm);
     	}
     }
 
     protected void setMidiDevice(String deviceName) {
     	if (mConnectionManager.isConnected()) {
-    		SetMidiDeviceCommand setDevice = new SetMidiDeviceCommand(deviceName);
-    		mConnectionManager.write(setDevice);
+    		SetMidiDevice setDevice = new SetMidiDevice(deviceName);
+    		mConnectionManager.send(setDevice);
     	}
 		mModel.setMidiDevice(deviceName);
 	}
@@ -278,6 +282,8 @@ public class Settings extends PreferenceActivity implements IController {
 
 		public void update() {
 
+			Log.i("SettingsView", "state = " + mModel.state);
+
 			switch (mModel.state) {
 
 				case SettingsModel.STATE_CONNECTING:
@@ -333,7 +339,7 @@ public class Settings extends PreferenceActivity implements IController {
 								entries[i] = mModel.midiDevices[i];
 								entryValues[i] = mModel.midiDevices[i];
 							}
-	
+
 							mDevices.setEnabled(true);
 							mDevices.setEntries(entries);
 							mDevices.setEntryValues(entryValues);

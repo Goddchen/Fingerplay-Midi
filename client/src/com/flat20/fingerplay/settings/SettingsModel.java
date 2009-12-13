@@ -3,6 +3,7 @@ package com.flat20.fingerplay.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
 import com.flat20.fingerplay.network.ConnectionManager;
@@ -16,7 +17,7 @@ public class SettingsModel {
 	public static final int STATE_CONNECTING_FAIL = 4;
 	public static final int STATE_CONNECTING_SUCCESS = 5;
 	public static final int STATE_DISCONNECTING = 6;
-	
+
 	protected SharedPreferences mSharedPreferences;
 	protected SettingsView mView = null;
 
@@ -61,8 +62,10 @@ public class SettingsModel {
 	}
 
 	public void setState(int state) {
-		this.state = state;
-		updateView();
+		if (this.state != state) {
+			this.state = state;
+			updateView();
+		}
 	}
 
 	public void setServerType(int value) {

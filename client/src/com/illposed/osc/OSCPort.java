@@ -1,7 +1,6 @@
 package com.illposed.osc;
 
 import java.net.*;
-import java.io.IOException;
 
 /**
  * OSCPort is an abstract superclass. To send OSC messages, use @see OSCPortOut. 

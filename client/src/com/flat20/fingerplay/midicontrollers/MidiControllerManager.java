@@ -1,5 +1,6 @@
 package com.flat20.fingerplay.midicontrollers;
 
+
 import java.util.LinkedHashMap;
 
 import java.util.Set;
@@ -7,9 +8,9 @@ import java.util.Set;
 import android.util.Log;
 
 import com.flat20.fingerplay.network.ConnectionManager;
-import com.flat20.fingerplay.socket.commands.MidiControlChangeSocketCommand;
-import com.flat20.fingerplay.socket.commands.MidiNoteOffSocketCommand;
-import com.flat20.fingerplay.socket.commands.MidiNoteOnSocketCommand;
+import com.flat20.fingerplay.socket.commands.midi.MidiControlChange;
+import com.flat20.fingerplay.socket.commands.midi.MidiNoteOff;
+import com.flat20.fingerplay.socket.commands.midi.MidiNoteOn;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 import com.flat20.gui.widgets.MidiWidget;
 import com.flat20.gui.widgets.Widget;
@@ -86,38 +87,44 @@ public class MidiControllerManager {
 
 	private IOnControlChangeListener onControlChangeListener = new IOnControlChangeListener() {
 
+		// Cached to limit garbage collects. 
+		final private MidiControlChange mControlChange = new MidiControlChange();
+		final private MidiNoteOn mNoteOn = new MidiNoteOn();
+		final private MidiNoteOff mNoteOff = new MidiNoteOff();
+
 		@Override
     	public void onControlChange(IMidiController midiController, int index, int value) {
 			if (mConnectionManager.isConnected()) {
 				int ccIndex = (int) getIndex(midiController);
-				SocketCommand socketCommand = new MidiControlChangeSocketCommand(0, 0, ccIndex + index, value);
-				mConnectionManager.write(socketCommand);
+				mControlChange.set(0xB0, 0, ccIndex+index, value);
+				//SocketCommand socketCommand = new MidiControlChange(0, 0, ccIndex + index, value);
+				mConnectionManager.send( mControlChange );
 			}
     	}
 
     	@Override
     	public void onNoteOn(IMidiController midiController, int key, int velocity) {
     		if (mConnectionManager.isConnected()) {
-				SocketCommand socketCommand = null;
 				int controllerIndex = (int) getIndex(midiController);
 				// midi channel, key, velocity
-				socketCommand = new MidiNoteOnSocketCommand(0, controllerIndex, velocity);
-				mConnectionManager.write(socketCommand);
+				mNoteOn.set(0, controllerIndex, velocity);
+				//socketCommand = new MidiNoteOn(0, controllerIndex, velocity);
+				mConnectionManager.send( mNoteOn );
     		}
     	}
 
     	@Override
     	public void onNoteOff(IMidiController midiController, int key, int velocity) {
     		if (mConnectionManager.isConnected()) {
-				SocketCommand socketCommand = null;
 				int controllerIndex = (int) getIndex(midiController);
-				socketCommand = new MidiNoteOffSocketCommand(0, controllerIndex, velocity);
-				mConnectionManager.write(socketCommand);
+				//socketCommand = new MidiNoteOff(0, controllerIndex, velocity);
+				mNoteOff.set(0, controllerIndex, velocity);
+				mConnectionManager.send(mNoteOff);
     		}
     	}
 
     };
-    
+
     private ConnectionManager.IConnectionListener mConnectionListener = new ConnectionManager.IConnectionListener() {
 
     	public void onConnect() {

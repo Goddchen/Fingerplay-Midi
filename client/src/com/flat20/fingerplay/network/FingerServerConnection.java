@@ -13,6 +13,11 @@ import java.net.SocketTimeoutException;
 
 import java.net.SocketException;
 
+import com.flat20.fingerplay.socket.commands.FingerEncoder;
+import com.flat20.fingerplay.socket.commands.SocketCommand;
+import com.flat20.fingerplay.socket.commands.SocketStringCommand;
+import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
+
 import android.util.Log;
 
 /**
@@ -30,6 +35,7 @@ import android.util.Log;
 public class FingerServerConnection extends Connection {
 
 	private final static int READ_TIMEOUT = 1000;
+	private final static int CONNECT_TIMEOUT = 10000;
 
 	private static final String MULTICAST_SERVERIP = "230.0.0.1";
 	private static final int MULTICAST_SERVERPORT = 9013;
@@ -44,18 +50,26 @@ public class FingerServerConnection extends Connection {
 	String server = null;
 	int port = DEFAULT_PORT;
 
+	//final private byte[] mBuffer;
+	//final MidiSocketCommand mMidiCommand;
+	//final SocketStringCommand mStringCommand;
+
 	public FingerServerConnection() {
-		
+		//mBuffer = new byte[ 0xFFFF ];
+		//mMidiCommand = new MidiSocketCommand();
+		//mStringCommand = new SocketStringCommand();
+		//System.out.println("REMOVE!");
+		//getServerAddressMulticast();
 	}
 
 	// Not in use, but should be.
-    public String getServerAddressMulticast() {
+    private String getServerAddressMulticast() {
     	try {
 
     		//WifiManager wifiManager = Context.getSystemService(Context.WIFI_SERVICE);
     		//wifiManager.isWifiEnabled();
 			MulticastSocket socket = new MulticastSocket(MULTICAST_SERVERPORT);
-			socket.setSoTimeout(3000);
+			socket.setSoTimeout(8000);
 			InetAddress address = InetAddress.getByName(MULTICAST_SERVERIP);
 			socket.joinGroup(address);
 
@@ -84,7 +98,7 @@ public class FingerServerConnection extends Connection {
 	public void connect(String serverAddress) throws ConnectException {
 		if (isConnected())
 			disconnect();
-		
+
         String[] split = serverAddress.split(":");
         if (split != null && split.length == 2) {
         	server = split[0];
@@ -95,14 +109,12 @@ public class FingerServerConnection extends Connection {
         } 
 
         try {
-			//socket = socketFactory.createSocket("192.168.0.97", 4444);
 			socket = new Socket();
-			//socket = socketFactory.createSocket(server, 4444);
 			socket.setSoTimeout(READ_TIMEOUT); //read intervals
-			//socket = socketFactory.createSocket("192.168.1.3", 4444);
 			socket.setTcpNoDelay(true);
 			InetSocketAddress remoteAddr = new InetSocketAddress(server, port);
-			socket.connect(remoteAddr, 8000); // was 2000
+
+			socket.connect(remoteAddr, CONNECT_TIMEOUT); // was 2000
 			try {
 				out = new DataOutputStream( socket.getOutputStream() );
 				in = new DataInputStream( socket.getInputStream() );
@@ -132,7 +144,7 @@ public class FingerServerConnection extends Connection {
 	public boolean isConnected() {
 		return (readThread != null && readThread.isRunning());
 	}
-
+/*
 	@Override
 	protected void write(byte[] data) {
 		if (out == null)
@@ -143,10 +155,20 @@ public class FingerServerConnection extends Connection {
 			//Log.i("asd", e.toString());
 		}
 	}
-
+*/
+	@Override
+	public void send(SocketCommand socketCommand) {
+		if (out != null) {
+			try {
+				out.write( FingerEncoder.encode(socketCommand) );
+			} catch (Exception e) {
+				Log.e("FingerserverConnection", e.toString());
+			}
+		}
+	}
 
 	public void disconnect() {
-		
+
 		try {
 			if (isConnected()) {
 				readThread.setRunning(false);
@@ -155,13 +177,11 @@ public class FingerServerConnection extends Connection {
 		} catch (IOException e) {
 			
 		} finally {
-
+			//socket = null;
 		}
+
 	}
 
-	
-	
-	
 
     // Create runnable for posting results from connect()
     final Runnable mDispatchSocketReadEvent = new Runnable() {
@@ -179,14 +199,11 @@ public class FingerServerConnection extends Connection {
         }
     };
 
-    // Need handler for callbacks to ServerService thread(?)
-    //final Handler mHandler = new Handler();
-
     // So reading is done in the background.
     class ReadThread extends Thread {
 
     	boolean running;
-    	
+
     	public ReadThread() {
     		running = true;
     	}
@@ -198,8 +215,60 @@ public class FingerServerConnection extends Connection {
     		running = r;
     	}
 
+
     	public void run() {
-    		byte[] buffer = new byte[4096];
+
+    		final MidiSocketCommand msm = new MidiSocketCommand();
+			final SocketStringCommand ssm = new SocketStringCommand();
+
+			while (running) {
+				try {
+
+					if (in.available() > 0) {
+						byte command = in.readByte();
+	
+						switch (command) {
+							case SocketCommand.COMMAND_MIDI_SHORT_MESSAGE:
+								FingerEncoder.decode(msm, command, in);
+								if (listener != null)
+				    				listener.onSocketCommand(msm);
+								break;
+							case SocketCommand.COMMAND_MIDI_DEVICE_LIST:
+								FingerEncoder.decode(ssm, command, in);
+								if (listener != null)
+				    				listener.onSocketCommand(ssm);
+								break;
+							case SocketCommand.COMMAND_VERSION:
+								FingerEncoder.decode(ssm, command, in);
+								if (listener != null)
+				    				listener.onSocketCommand(ssm);
+								break;
+							default:
+								System.out.println("Unknown command: " + command);
+								break;
+						}
+					}
+				} catch (SocketTimeoutException e) {
+					// normal behaviour from socket reads.
+					Log.i("FSC", "SocketTimeoutException " + e);
+				} catch (Exception e) {
+					Log.i("FSC", "read exception " + e);
+					disconnect();
+					Log.i("FSC", "onDiksconnect should be called");
+					try {
+						socket.close();
+					} catch (Exception e2) {
+						System.out.println("desperate close!" + e2);
+					}
+					//setRunning(false);
+					// TODO Run this in disconnect() ??
+    				if (listener != null)
+    					listener.onDisconnect();
+				}
+
+			}
+
+/*    		
     		while (running) {
 	    		try {
 	    			int numRead = in.read(buffer);
@@ -220,7 +289,56 @@ public class FingerServerConnection extends Connection {
 	    			Log.i("sc.rt", e.toString());
 	    		}
     		}
+*/
     	}
     }
 
+    
+/*
+	private MidiSocketCommand handleMidiShortMessage(byte command, DataInputStream in) throws IOException {
+		byte midiCommand = in.readByte();//buffer[index + 1] & 0xFF; // Make it unsigned.
+		byte channel = in.readByte();//buffer[index + 2] & 0xFF;
+		byte data1 = in.readByte();//buffer[index + 3] & 0xFF;
+		byte data2 = in.readByte();//buffer[index + 4] & 0xFF;
+
+		MidiSocketCommand msc = new MidiSocketCommand(command, channel, data1, data2);
+
+		//TODO check all ranges.
+		System.out.println("midiCommand = " + midiCommand + " channel = " + channel + ", data1 = " + data1 + " data2 = " + data2);
+		return msc;
+		//synchronized (midi) {
+			//midi.sendShortMessage(midiCommand, channel, data1, data2);						
+		//}
+	}
+
+	private SocketStringCommand handleMidiDeviceListCommand(byte command, DataInputStream in) throws IOException {
+
+		SocketStringCommand ssm = parseStringCommand(command, in);
+		String deviceList = ssm.message;
+
+		System.out.println("Device list: " + deviceList);
+
+		return ssm;
+	}
+
+	private SocketStringCommand parseStringCommand(byte command, DataInputStream in) throws SocketException, IOException {
+		byte[] buffer = mBuffer;
+		SocketStringCommand stringCommand = mStringCommand;
+
+		// Read until we have an int.
+		int textLength = in.readInt(); // wait forever?
+		if (textLength == -1)
+			throw new SocketException("Disconnected");
+
+		//byte[] data = new byte[textLength];
+		int numRead = in.read(buffer, 0, textLength); // wait forever?
+		if (numRead == -1)
+			throw new SocketException("Disconnected");
+
+		FingerEncoder.decode(stringCommand, command, textLength, buffer);
+
+		System.out.println(stringCommand.command + ": " + stringCommand.message);
+		return stringCommand;
+	}
+*/
 } 

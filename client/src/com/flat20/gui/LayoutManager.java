@@ -112,7 +112,7 @@ public class LayoutManager {
 								widget = new Slider("Slider " + (++numSliders));
 								//System.out.println("screen.addWidget( new Slider() );");
 							} else if (name.equals("touchpad") || name.equals("xypad")) {
-								widget = new XYPad("Touch Pad " + (++numTouchPads));
+								widget = new XYPad("XY Pad " + (++numTouchPads));
 								//System.out.println("screen.addWidget( new Touchpad() ); " + numTouchPads);
 							}
 							if (widget != null) {

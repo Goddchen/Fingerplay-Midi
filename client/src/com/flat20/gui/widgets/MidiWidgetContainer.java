@@ -1,6 +1,5 @@
 package com.flat20.gui.widgets;
 
-import android.util.Log;
 import android.view.KeyEvent;
 
 import com.flat20.gui.animations.AnimationManager;

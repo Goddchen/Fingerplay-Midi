@@ -64,7 +64,6 @@ public class ConnectionManager {
 	}
 
 	public void connect(String server) {
-		Log.i("cm", "connect " + server + ", if mConnection null? " + mConnection);
 		if (mConnection != null) {
 			ConnectThread t = new ConnectThread(server);
 			t.start();
@@ -82,10 +81,14 @@ public class ConnectionManager {
 		return false;
 	}
 
+	public void send(SocketCommand sm) {
+		if (mConnection != null)
+			mConnection.send(sm);
+	}/*
 	public void write(SocketCommand sm) {
 		if (mConnection != null)
 			mConnection.write(sm.data);
-	}
+	}*/
 
     final Handler mHandler = new Handler();
 
@@ -117,9 +120,6 @@ public class ConnectionManager {
         }
     };
 */
-    // This is a bit of a hack. socketCommand will be overwritten if we get another 
-    // message from the server before the previous one have been handled.
-    // TODO Should create a new instance of it for every message but I don't want to..
     class OnSocketCommand implements Runnable {
     	public SocketCommand socketCommand = null;
     	public void run() {
@@ -128,6 +128,13 @@ public class ConnectionManager {
     	}
     };
     final OnSocketCommand mOnSocketCommand = new OnSocketCommand();
+
+    final Runnable mOnDisconnect = new Runnable() {
+    	public void run() {
+    		for (IConnectionListener listener : mConnectionListeners)
+    			listener.onDisconnect();
+    	}
+    };
 
     // So connection is done in the background.
     class ConnectThread extends Thread {
@@ -154,17 +161,15 @@ public class ConnectionManager {
 	// Listener for our connection
     private Connection.OnUpdateListener mOnUpdateListener = new Connection.OnUpdateListener() {
 
-		// TODO Rename to onDisconnect
     	public void onDisconnect() {
-    		for (IConnectionListener listener : mConnectionListeners)
-    			listener.onDisconnect();
+    		mHandler.post(mOnDisconnect);
     	}
 
-        public void onRead(byte[] data, int length) {
-			SocketCommand sm = new SocketCommand(data);
-        	mOnSocketCommand.socketCommand = sm;
+    	public void onSocketCommand(SocketCommand socketCommand) {
+    		mOnSocketCommand.socketCommand = socketCommand;
     		mHandler.post(mOnSocketCommand);
-        }
+    	}
+
     };
 
 	// Interface used by application
