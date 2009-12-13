@@ -1,3 +1,5 @@
+package com.flat20.fingerplay;
+
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -5,13 +7,11 @@ import java.net.Socket;
 import com.flat20.fingerplay.Midi;
 import com.flat20.fingerplay.socket.ClientSocketThread;
 import com.flat20.fingerplay.socket.MulticastServer;
-import com.flat20.fingerplay.socket.commands.SetMidiDeviceCommand;
-import com.flat20.fingerplay.socket.commands.SocketStringCommand;
-
+import com.flat20.fingerplay.socket.commands.SocketCommand;
 
 public class FingerPlayServer implements Runnable{
 
-	private static final String VERSION = "0.7.0";
+	public static final String VERSION = "0.7.0";
 	public static final int SERVERPORT = 4444;
 
 	public static final String MULTICAST_SERVERIP = "230.0.0.1";
@@ -37,7 +37,8 @@ public class FingerPlayServer implements Runnable{
 			}*/
 
 			// 
-			SocketStringCommand sm = new SetMidiDeviceCommand("apa");
+			//SocketStringCommand sm = new SetMidiDeviceCommand("apa");
+			SocketCommand s = new SocketCommand();
 
 
  			// Open MIDI Device.
@@ -68,10 +69,11 @@ public class FingerPlayServer implements Runnable{
 			Thread multicastServerThread = new Thread( new MulticastServer(MULTICAST_SERVERIP, MULTICAST_SERVERPORT, multicastOutputMessage) );
 			multicastServerThread.start();
 
-			
-			// Wait for client connection
 
 			System.out.println("Listening on " + multicastOutputMessage);
+
+			// Wait for client connection
+				
 			ServerSocket serverSocket = new ServerSocket(mPort);
 			System.out.println("Waiting for connection from phone..");
 			while (true) {
@@ -83,6 +85,7 @@ public class FingerPlayServer implements Runnable{
 
 				System.out.println("Phone connected.");
 			}
+
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}

@@ -7,10 +7,10 @@
 
 	<target name="jar">
 		<mkdir dir="bin/"/>
-		<copy file="lib/FingerPlayCommon/FingerPlayCommon.jar" todir="bin/" />
+		<copy file="libs/FingerPlayCommon.jar" todir="bin/" />
         <jar destfile="bin/FingerPlayServer.jar" basedir="build/">
             <manifest>
-                <attribute name="Main-Class" value="FingerPlayServer" />
+                <attribute name="Main-Class" value="com.flat20.fingerplay.FingerPlayServer" />
                 <attribute name="Class-Path" value="FingerPlayCommon.jar" />
             </manifest>
         </jar>

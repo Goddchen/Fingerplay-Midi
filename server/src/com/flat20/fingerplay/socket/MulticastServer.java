@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.net.SocketException;
 
 public class MulticastServer implements Runnable {
 
@@ -23,10 +25,15 @@ public class MulticastServer implements Runnable {
 
 	public void run() {
 		try {
-			DatagramSocket socket = new DatagramSocket();
-			InetAddress address = InetAddress.getByName(this.multicastIP);
+			// SocketException: No buffer space available (maximum connections reached?): Datagram send failed
+			// so timeout?
+			InetAddress group = InetAddress.getByName(this.multicastIP);
+			MulticastSocket socket = new MulticastSocket(this.multicastPort);
+			socket.joinGroup(group);
+			
+			//DatagramSocket socket = new DatagramSocket();
 			while (true) {
-				DatagramPacket packet = new DatagramPacket(outputMessageBuffer, outputMessageBuffer.length, address, this.multicastPort);
+				DatagramPacket packet = new DatagramPacket(outputMessageBuffer, outputMessageBuffer.length, group, this.multicastPort);
 				socket.send(packet);
 				try {
 					Thread.sleep(1000);
@@ -35,7 +42,7 @@ public class MulticastServer implements Runnable {
 				}
 			}
 
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
 		System.out.println("MulticastServerThread exit.");

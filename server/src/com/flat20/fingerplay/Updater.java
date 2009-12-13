@@ -1,3 +1,4 @@
+package com.flat20.fingerplay;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -14,7 +15,6 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 
 public class Updater {
 

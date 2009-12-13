@@ -8,106 +8,121 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+import com.flat20.fingerplay.FingerPlayServer;
 import com.flat20.fingerplay.Midi;
-import com.flat20.fingerplay.socket.commands.DeviceListCommand;
+import com.flat20.fingerplay.socket.commands.FingerEncoder;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
+import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
+import com.flat20.fingerplay.socket.commands.SocketStringCommand;
+import com.flat20.fingerplay.socket.commands.misc.DeviceList;
+import com.flat20.fingerplay.socket.commands.misc.Version;
 
 public class ClientSocketThread implements Runnable {
 
-	private Socket client;
-	private Midi midi;
-	private byte[] buffer;
-	private DataInputStream in;
-	private DataOutputStream out;
+	final private Socket client;
+	final private Midi midi;
+	//private DataInputStream in;
+	//private DataOutputStream out;
+
+	//final private byte[] mBuffer;
 
 	public ClientSocketThread(Socket client, Midi midi) {
 		this.client = client;
 		this.midi = midi;
-		buffer = new byte[1024];
+
+		//mBuffer = new byte[ 0xFFFF ]; // absolute maximum length is 65535
 	}
 
 	public void run() {
 		try {
-			in = new DataInputStream(client.getInputStream());
-			out = new DataOutputStream(client.getOutputStream());
+			//byte[] buffer = mBuffer;
+
+			final DataInputStream in = new DataInputStream(client.getInputStream());
+			final DataOutputStream out = new DataOutputStream(client.getOutputStream());
 
 			while (client.isConnected()) {
 
-				int length = in.read(buffer);
-				if (length == -1) {
-					client.close();
-					break;
-				}
-				//System.out.println("buffer length = " + length);
-				if (length >= 1) {
-					int index = 0;
-					int next = 0;
-					while (index < length) {
-						int command = buffer[index] & 0xFF;
-						//System.out.println("Got command = " + command);
+				//if (in.available() > 0) {
+					
+					try {
+						// Read command
+						byte command = in.readByte();
+						//System.out.println("command = " + command + ", avail: " + in.available());
+
 						switch (command) {
 							case SocketCommand.COMMAND_MIDI_SHORT_MESSAGE:
-								next = handleMidiShortMessage(buffer, index);
+								handleMidiShortMessage(command, in);
 								break;
 							case SocketCommand.COMMAND_REQUEST_MIDI_DEVICE_LIST:
-								next = handleRequestMidiDeviceListCommand(buffer, index);
+								handleRequestMidiDeviceListCommand(command, in, out);
 								break;
 							case SocketCommand.COMMAND_SET_MIDI_DEVICE:
-								next = handleSetMidiDeviceCommand(buffer, index);
+								handleSetMidiDeviceCommand(command, in);
+								break;
+							case SocketCommand.COMMAND_VERSION:
+								handleVersion(command, in, out);
 								break;
 							default:
-								System.out.println("Weird message. Skipping all." + index + ", " + next + ", " + length + ", " + buffer);
-								next = length - index;
+								System.out.println("Unknown command: " + command);
 								break;
 						}
-						index += next;
+					} catch (SocketTimeoutException e) {
+						// TODO Remove
+						System.out.println("socket read timed out..");
 					}
-				}
+				//}
 			}
 
 		} catch (SocketException e) {
-			try {
-				client.close();
-			} catch (IOException io) {
-				System.out.println(io);
-			}
+			System.out.println(e);
 		} catch (EOFException e) {
-			try {
-				client.close();
-			} catch (IOException io) {
-				System.out.println(io);
-			}
-		} catch (SocketTimeoutException e) {
-			try {
-				client.close();
-			} catch (IOException io) {
-				System.out.println(io);
-			}
+			System.out.println(e);
+		//} catch (SocketTimeoutException e) {
+			//System.out.println(e);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			System.out.println("Client message too long for buffer.");
+			System.out.println(e);
 		} catch(Exception e) {
 			System.out.println("S: Error");
 			e.printStackTrace();
 		} finally {
-			//client.close();
-			//
+			try {
+				client.close();
+			} catch (IOException io) {
+			}
 		}
 		System.out.println("Phone disconnected.");
 		return;
 	}
 
-	private int handleMidiShortMessage(byte[] buffer, int index) {
-		int midiCommand = buffer[index + 1] & 0xFF; // Make it unsigned.
-		int channel = buffer[index + 2] & 0xFF;
-		int data1 = buffer[index + 3] & 0xFF;
-		int data2 = buffer[index + 4] & 0xFF;
-		//TODO check all ranges.
-		System.out.println("midiCommand = " + midiCommand + " channel = " + channel + ", data1 = " + data1 + " data2 = " + data2);
-		synchronized (midi) {
-			midi.sendShortMessage(midiCommand, channel, data1, data2);						
+	private void handleVersion(byte command, DataInputStream in, DataOutputStream out) throws Exception {
+		SocketStringCommand ssm = new SocketStringCommand();
+
+		FingerEncoder.decode(ssm, command, in);
+
+		System.out.println("Client version: " + ssm.message);
+
+		Version version = new Version(FingerPlayServer.VERSION);
+
+		try {
+			out.write( FingerEncoder.encode(version) );
+		} catch (IOException e) {
+			System.out.println(e);
 		}
-		return 5;
+
 	}
 
-	private int handleRequestMidiDeviceListCommand(byte[] buffer, int index) {
+	private void handleMidiShortMessage(byte command, DataInputStream in) throws IOException {
+		final MidiSocketCommand socketCommand = new MidiSocketCommand();
+		FingerEncoder.decode(socketCommand, command, in);
+		//TODO check all ranges.
+		System.out.println("midiCommand = " + socketCommand.midiCommand + " channel = " + socketCommand.channel + ", data1 = " + socketCommand.data1 + " data2 = " + socketCommand.data2);
+		synchronized (midi) {
+			midi.sendShortMessage(socketCommand.midiCommand, socketCommand.channel, socketCommand.data1, socketCommand.data2);						
+		}
+	}
+
+	private void handleRequestMidiDeviceListCommand(byte command, DataInputStream in, DataOutputStream out) {
 		String[] deviceNames = Midi.getDeviceNames(false, true);
 
 		String allDevices = "";
@@ -117,31 +132,27 @@ public class ClientSocketThread implements Runnable {
 		if (deviceNames.length > 0)
 			allDevices = allDevices.substring(0, allDevices.length()-1);
 
-		DeviceListCommand deviceList = new DeviceListCommand( allDevices );
+		DeviceList deviceList = new DeviceList( allDevices );
+
 		try {
-			out.write(deviceList.data);
+			out.write( FingerEncoder.encode(deviceList) );
 		} catch (IOException e) {
-			System.out.println(e);
+			e.printStackTrace();
 		}
-		return 1;
 	}
 
-	private int handleSetMidiDeviceCommand(byte[] buffer, int index) {
-		String device = "";
-		int i;
-		for (i = index+1; i<buffer.length; i++) {
-			if (buffer[i] == 0) {
-				//System.out.println("we found 0 at " + i);
-				break;
-			}
-			device += (char)buffer[i];
-		}
-		//System.out.println("Set MIDI Device: " + device);
+	private void handleSetMidiDeviceCommand(byte command, DataInputStream in) throws Exception {
+		SocketStringCommand ssm = new SocketStringCommand();
+
+		FingerEncoder.decode(ssm, command, in);
+
+		String device = ssm.message;
+
+		System.out.println("Set MIDI Device: " + device);
 		synchronized (midi) {
 			midi.close();
 			midi.open(device, true); // true = bForOutput					
 		}
-		return i + 1; // An extra 0 perhaps?
 	}
 
 }
