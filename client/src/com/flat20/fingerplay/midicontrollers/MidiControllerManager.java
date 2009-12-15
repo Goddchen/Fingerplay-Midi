@@ -94,33 +94,33 @@ public class MidiControllerManager {
 
 		@Override
     	public void onControlChange(IMidiController midiController, int index, int value) {
-			if (mConnectionManager.isConnected()) {
+			//if (mConnectionManager.isConnected()) {
 				int ccIndex = (int) getIndex(midiController);
 				mControlChange.set(0xB0, 0, ccIndex+index, value);
 				//SocketCommand socketCommand = new MidiControlChange(0, 0, ccIndex + index, value);
 				mConnectionManager.send( mControlChange );
-			}
+			//}
     	}
 
     	@Override
     	public void onNoteOn(IMidiController midiController, int key, int velocity) {
-    		if (mConnectionManager.isConnected()) {
+    		//if (mConnectionManager.isConnected()) {
 				int controllerIndex = (int) getIndex(midiController);
 				// midi channel, key, velocity
 				mNoteOn.set(0, controllerIndex, velocity);
 				//socketCommand = new MidiNoteOn(0, controllerIndex, velocity);
 				mConnectionManager.send( mNoteOn );
-    		}
+    		//}
     	}
 
     	@Override
     	public void onNoteOff(IMidiController midiController, int key, int velocity) {
-    		if (mConnectionManager.isConnected()) {
+    		//if (mConnectionManager.isConnected()) {
 				int controllerIndex = (int) getIndex(midiController);
 				//socketCommand = new MidiNoteOff(0, controllerIndex, velocity);
 				mNoteOff.set(0, controllerIndex, velocity);
 				mConnectionManager.send(mNoteOff);
-    		}
+    		//}
     	}
 
     };

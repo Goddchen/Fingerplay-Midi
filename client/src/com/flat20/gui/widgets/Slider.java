@@ -1,6 +1,8 @@
 package com.flat20.gui.widgets;
 
 
+import android.util.Log;
+
 import com.flat20.fingerplay.R;
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.Parameter;
@@ -82,11 +84,11 @@ public class Slider extends MidiWidget implements IMidiController {
 
 	@Override
 	public boolean onTouchMove(int touchX, int touchY, float pressure) {
-		int value = (int)(((float)touchY / (float)height) * 0x7F);
+		float dy = ((float)touchY / (float)height);
+		int value = (int) Math.max(0, Math.min(dy * 0x7F, 0x7F));
 		if (value != lastValue) {
-			value = Math.max(0, Math.min(touchY, height));
 			sendControlChange(CC_VALUE, value);
-			setMeterHeight( value );
+			setMeterHeight( Math.max(0, Math.min(touchY, height)) );
 			lastValue = value;
 		}
 		return true;

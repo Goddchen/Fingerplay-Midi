@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-		<activity android:name=".settings.Settings" android:label="Settings"
+		<activity android:name=".settings.SettingsView" android:label="Settings"
 				android:screenOrientation="landscape"
                  />
 <!--  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" -->

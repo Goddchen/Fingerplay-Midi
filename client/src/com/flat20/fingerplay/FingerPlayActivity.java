@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
 import com.flat20.fingerplay.network.ConnectionManager;
-import com.flat20.fingerplay.settings.Settings;
 import com.flat20.fingerplay.settings.SettingsModel;
+import com.flat20.fingerplay.settings.SettingsView;
 import com.flat20.gui.InteractiveActivity;
 import com.flat20.gui.NavigationButtons;
 import com.flat20.gui.animations.AnimationManager;
@@ -141,7 +141,7 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 		@Override
 		public void onSettingsSelected() {
-			Intent settingsIntent = new Intent(getApplicationContext(), Settings.class);
+			Intent settingsIntent = new Intent(getApplicationContext(), SettingsView.class);
 			settingsIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivity( settingsIntent );
 		}

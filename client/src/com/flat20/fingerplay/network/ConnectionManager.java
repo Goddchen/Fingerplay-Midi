@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.os.Handler;
-import android.util.Log;
 
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 

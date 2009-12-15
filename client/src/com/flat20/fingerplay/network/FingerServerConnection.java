@@ -13,10 +13,15 @@ import java.net.SocketTimeoutException;
 
 import java.net.SocketException;
 
-import com.flat20.fingerplay.socket.commands.FingerEncoder;
+import com.flat20.fingerplay.socket.commands.FingerReader;
+import com.flat20.fingerplay.socket.commands.FingerWriter;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
-import com.flat20.fingerplay.socket.commands.SocketStringCommand;
+import com.flat20.fingerplay.socket.commands.FingerReader.IReceiver;
 import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
+import com.flat20.fingerplay.socket.commands.misc.DeviceList;
+import com.flat20.fingerplay.socket.commands.misc.RequestMidiDeviceList;
+import com.flat20.fingerplay.socket.commands.misc.SetMidiDevice;
+import com.flat20.fingerplay.socket.commands.misc.Version;
 
 import android.util.Log;
 
@@ -32,7 +37,7 @@ import android.util.Log;
  * @author andreas
  *
  */
-public class FingerServerConnection extends Connection {
+public class FingerServerConnection extends Connection implements IReceiver {
 
 	private final static int READ_TIMEOUT = 1000;
 	private final static int CONNECT_TIMEOUT = 10000;
@@ -45,6 +50,8 @@ public class FingerServerConnection extends Connection {
 	private Socket socket = null;
 	private DataOutputStream out = null;
 	private DataInputStream in = null;
+	private FingerWriter mWriter;
+	private FingerReader mReader;
 	private ReadThread readThread;
 
 	String server = null;
@@ -119,6 +126,9 @@ public class FingerServerConnection extends Connection {
 				out = new DataOutputStream( socket.getOutputStream() );
 				in = new DataInputStream( socket.getInputStream() );
 
+				mWriter = new FingerWriter(out);
+				mReader = new FingerReader(in, this);
+
 				readThread = new ReadThread();
 				readThread.start();
 
@@ -160,10 +170,16 @@ public class FingerServerConnection extends Connection {
 	public void send(SocketCommand socketCommand) {
 		if (out != null) {
 			try {
-				out.write( FingerEncoder.encode(socketCommand) );
+				mWriter.write(socketCommand);
 			} catch (Exception e) {
 				Log.e("FingerserverConnection", e.toString());
 			}
+			/*
+			try {
+				out.write( FingerEncoder.encode(socketCommand) );
+			} catch (Exception e) {
+				Log.e("FingerserverConnection", e.toString());
+			}*/
 		}
 	}
 
@@ -218,13 +234,13 @@ public class FingerServerConnection extends Connection {
 
     	public void run() {
 
-    		final MidiSocketCommand msm = new MidiSocketCommand();
-			final SocketStringCommand ssm = new SocketStringCommand();
-
 			while (running) {
 				try {
 
 					if (in.available() > 0) {
+						
+						mReader.readCommand();
+						/*
 						byte command = in.readByte();
 	
 						switch (command) {
@@ -246,8 +262,9 @@ public class FingerServerConnection extends Connection {
 							default:
 								System.out.println("Unknown command: " + command);
 								break;
-						}
+						}*/
 					}
+					Thread.sleep(50);
 				} catch (SocketTimeoutException e) {
 					// normal behaviour from socket reads.
 					Log.i("FSC", "SocketTimeoutException " + e);
@@ -293,52 +310,30 @@ public class FingerServerConnection extends Connection {
     	}
     }
 
-    
-/*
-	private MidiSocketCommand handleMidiShortMessage(byte command, DataInputStream in) throws IOException {
-		byte midiCommand = in.readByte();//buffer[index + 1] & 0xFF; // Make it unsigned.
-		byte channel = in.readByte();//buffer[index + 2] & 0xFF;
-		byte data1 = in.readByte();//buffer[index + 3] & 0xFF;
-		byte data2 = in.readByte();//buffer[index + 4] & 0xFF;
-
-		MidiSocketCommand msc = new MidiSocketCommand(command, channel, data1, data2);
-
-		//TODO check all ranges.
-		System.out.println("midiCommand = " + midiCommand + " channel = " + channel + ", data1 = " + data1 + " data2 = " + data2);
-		return msc;
-		//synchronized (midi) {
-			//midi.sendShortMessage(midiCommand, channel, data1, data2);						
-		//}
+	@Override
+	public void onDeviceList(DeviceList socketCommand) throws Exception {
+		if (listener != null)
+			listener.onSocketCommand(socketCommand);
 	}
 
-	private SocketStringCommand handleMidiDeviceListCommand(byte command, DataInputStream in) throws IOException {
-
-		SocketStringCommand ssm = parseStringCommand(command, in);
-		String deviceList = ssm.message;
-
-		System.out.println("Device list: " + deviceList);
-
-		return ssm;
+	@Override
+	public void onMidiSocketCommand(MidiSocketCommand socketCommand) throws Exception {
+		if (listener != null)
+			listener.onSocketCommand(socketCommand);
 	}
 
-	private SocketStringCommand parseStringCommand(byte command, DataInputStream in) throws SocketException, IOException {
-		byte[] buffer = mBuffer;
-		SocketStringCommand stringCommand = mStringCommand;
-
-		// Read until we have an int.
-		int textLength = in.readInt(); // wait forever?
-		if (textLength == -1)
-			throw new SocketException("Disconnected");
-
-		//byte[] data = new byte[textLength];
-		int numRead = in.read(buffer, 0, textLength); // wait forever?
-		if (numRead == -1)
-			throw new SocketException("Disconnected");
-
-		FingerEncoder.decode(stringCommand, command, textLength, buffer);
-
-		System.out.println(stringCommand.command + ": " + stringCommand.message);
-		return stringCommand;
+	@Override
+	public void onVersion(Version socketCommand) throws Exception {
+		if (listener != null)
+			listener.onSocketCommand(socketCommand);
 	}
-*/
+
+	// Server side
+	@Override
+	public void onRequestMidiDeviceList(RequestMidiDeviceList socketCommand) throws Exception {
+	}
+
+	@Override
+	public void onSetMidiDevice(SetMidiDevice socketCommand) throws Exception {
+	}
 } 
