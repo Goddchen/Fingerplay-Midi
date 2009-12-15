@@ -10,25 +10,32 @@ import java.net.SocketTimeoutException;
 
 import com.flat20.fingerplay.FingerPlayServer;
 import com.flat20.fingerplay.Midi;
-import com.flat20.fingerplay.socket.commands.FingerEncoder;
-import com.flat20.fingerplay.socket.commands.SocketCommand;
+import com.flat20.fingerplay.socket.commands.FingerReader;
+import com.flat20.fingerplay.socket.commands.FingerWriter;
+import com.flat20.fingerplay.socket.commands.FingerReader.IReceiver;
 import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
-import com.flat20.fingerplay.socket.commands.SocketStringCommand;
 import com.flat20.fingerplay.socket.commands.misc.DeviceList;
+import com.flat20.fingerplay.socket.commands.misc.RequestMidiDeviceList;
+import com.flat20.fingerplay.socket.commands.misc.SetMidiDevice;
 import com.flat20.fingerplay.socket.commands.misc.Version;
 
-public class ClientSocketThread implements Runnable {
+public class ClientSocketThread implements Runnable, IReceiver {
 
 	final private Socket client;
 	final private Midi midi;
-	//private DataInputStream in;
-	//private DataOutputStream out;
+	final private DataInputStream in;
+	final private DataOutputStream out;
+	final private FingerWriter mWriter;
 
 	//final private byte[] mBuffer;
 
-	public ClientSocketThread(Socket client, Midi midi) {
+	public ClientSocketThread(Socket client, Midi midi) throws IOException {
 		this.client = client;
 		this.midi = midi;
+		
+		in = new DataInputStream(client.getInputStream());
+		out = new DataOutputStream(client.getOutputStream());
+		mWriter = new FingerWriter(out);
 
 		//mBuffer = new byte[ 0xFFFF ]; // absolute maximum length is 65535
 	}
@@ -37,35 +44,17 @@ public class ClientSocketThread implements Runnable {
 		try {
 			//byte[] buffer = mBuffer;
 
-			final DataInputStream in = new DataInputStream(client.getInputStream());
-			final DataOutputStream out = new DataOutputStream(client.getOutputStream());
+			//final DataInputStream in = new DataInputStream(client.getInputStream());
+			//final DataOutputStream out = new DataOutputStream(client.getOutputStream());
+			final FingerReader reader = new FingerReader(in, this);
 
 			while (client.isConnected()) {
 
 				//if (in.available() > 0) {
-					
-					try {
-						// Read command
-						byte command = in.readByte();
-						//System.out.println("command = " + command + ", avail: " + in.available());
 
-						switch (command) {
-							case SocketCommand.COMMAND_MIDI_SHORT_MESSAGE:
-								handleMidiShortMessage(command, in);
-								break;
-							case SocketCommand.COMMAND_REQUEST_MIDI_DEVICE_LIST:
-								handleRequestMidiDeviceListCommand(command, in, out);
-								break;
-							case SocketCommand.COMMAND_SET_MIDI_DEVICE:
-								handleSetMidiDeviceCommand(command, in);
-								break;
-							case SocketCommand.COMMAND_VERSION:
-								handleVersion(command, in, out);
-								break;
-							default:
-								System.out.println("Unknown command: " + command);
-								break;
-						}
+					try {
+						// Reads one command
+						reader.readCommand();
 					} catch (SocketTimeoutException e) {
 						// TODO Remove
 						System.out.println("socket read timed out..");
@@ -74,10 +63,8 @@ public class ClientSocketThread implements Runnable {
 			}
 
 		} catch (SocketException e) {
-			System.out.println(e);
+			//System.out.println(e);
 		} catch (EOFException e) {
-			System.out.println(e);
-		//} catch (SocketTimeoutException e) {
 			//System.out.println(e);
 		} catch (ArrayIndexOutOfBoundsException e) {
 			System.out.println("Client message too long for buffer.");
@@ -95,34 +82,22 @@ public class ClientSocketThread implements Runnable {
 		return;
 	}
 
-	private void handleVersion(byte command, DataInputStream in, DataOutputStream out) throws Exception {
-		SocketStringCommand ssm = new SocketStringCommand();
-
-		FingerEncoder.decode(ssm, command, in);
-
-		System.out.println("Client version: " + ssm.message);
+	public void onVersion(Version clientVersion) throws Exception {//byte command, DataInputStream in, DataOutputStream out) throws Exception {
+		System.out.println("Client version: " + clientVersion.message);
 
 		Version version = new Version(FingerPlayServer.VERSION);
 
-		try {
-			out.write( FingerEncoder.encode(version) );
-		} catch (IOException e) {
-			System.out.println(e);
-		}
-
+		mWriter.write(version);
 	}
 
-	private void handleMidiShortMessage(byte command, DataInputStream in) throws IOException {
-		final MidiSocketCommand socketCommand = new MidiSocketCommand();
-		FingerEncoder.decode(socketCommand, command, in);
-		//TODO check all ranges.
+	public void onMidiSocketCommand(MidiSocketCommand socketCommand) throws Exception {
 		System.out.println("midiCommand = " + socketCommand.midiCommand + " channel = " + socketCommand.channel + ", data1 = " + socketCommand.data1 + " data2 = " + socketCommand.data2);
 		synchronized (midi) {
 			midi.sendShortMessage(socketCommand.midiCommand, socketCommand.channel, socketCommand.data1, socketCommand.data2);						
 		}
 	}
 
-	private void handleRequestMidiDeviceListCommand(byte command, DataInputStream in, DataOutputStream out) {
+	public void onRequestMidiDeviceList(RequestMidiDeviceList request) throws Exception {
 		String[] deviceNames = Midi.getDeviceNames(false, true);
 
 		String allDevices = "";
@@ -134,17 +109,10 @@ public class ClientSocketThread implements Runnable {
 
 		DeviceList deviceList = new DeviceList( allDevices );
 
-		try {
-			out.write( FingerEncoder.encode(deviceList) );
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		mWriter.write(deviceList);
 	}
 
-	private void handleSetMidiDeviceCommand(byte command, DataInputStream in) throws Exception {
-		SocketStringCommand ssm = new SocketStringCommand();
-
-		FingerEncoder.decode(ssm, command, in);
+	public void onSetMidiDevice(SetMidiDevice ssm) throws Exception {
 
 		String device = ssm.message;
 
@@ -153,6 +121,10 @@ public class ClientSocketThread implements Runnable {
 			midi.close();
 			midi.open(device, true); // true = bForOutput					
 		}
+	}
+
+	public void onDeviceList(DeviceList deviceList) throws Exception {
+		
 	}
 
 }
