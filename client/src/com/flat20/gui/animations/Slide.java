@@ -1,5 +1,7 @@
 package com.flat20.gui.animations;
 
+import android.util.Log;
+
 import com.flat20.gui.sprites.Sprite;
 
 public class Slide extends Animation {

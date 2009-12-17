@@ -112,7 +112,8 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 		@Override
 		public void onPadsSelected() {
-			AnimationManager.getInstance().remove(mWidgetsSlide);
+			if (mWidgetsSlide != null)
+				AnimationManager.getInstance().remove(mWidgetsSlide);
 			mWidgetsSlide = new Slide(mMidiWidgetsContainer, 0, -640);
 			AnimationManager.getInstance().add( mWidgetsSlide );
 
@@ -123,7 +124,8 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 		@Override
 		public void onSlidersSelected() {
-			AnimationManager.getInstance().remove(mWidgetsSlide);
+			if (mWidgetsSlide != null)
+				AnimationManager.getInstance().remove(mWidgetsSlide);
 			mWidgetsSlide = new Slide(mMidiWidgetsContainer, 0, -320);
 			AnimationManager.getInstance().add( mWidgetsSlide ); 
 			//Slide moveBackground = new Slide(mLogo, 0, -96);
@@ -132,7 +134,8 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 		@Override
 		public void onXYPadSelected() {
-			AnimationManager.getInstance().remove(mWidgetsSlide);
+			if (mWidgetsSlide != null)
+				AnimationManager.getInstance().remove(mWidgetsSlide);
 			mWidgetsSlide = new Slide(mMidiWidgetsContainer, 0, 0);
 			AnimationManager.getInstance().add( mWidgetsSlide );
 			//Slide moveBackground = new Slide(mLogo, 0, 0);
