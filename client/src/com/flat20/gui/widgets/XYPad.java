@@ -1,20 +1,17 @@
 package com.flat20.gui.widgets;
 
-import com.flat20.fingerplay.R;
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.Parameter;
+import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
-import com.flat20.gui.textures.ResourceTexture;
-import com.flat20.gui.textures.StretchedMaterial;
-import com.flat20.gui.textures.TextureManager;
 
 public class XYPad extends MidiWidget implements IMidiController {
-
+/*
 	final private static ResourceTexture sMeterTex = TextureManager.createResourceTexture(R.drawable.touchpad_meter, 32, 32);
 	final private static StretchedMaterial sMeterMat = new StretchedMaterial(sMeterTex);
 	final private static ResourceTexture sMeterOffTex = TextureManager.createResourceTexture(R.drawable.touchpad_meter_off, 32, 32);
 	final private static StretchedMaterial sMeterOffMat = new StretchedMaterial(sMeterOffTex);
-
+*/
 	final protected MaterialSprite mMeter;
 	final protected MaterialSprite mMeterOff;
 
@@ -41,8 +38,8 @@ public class XYPad extends MidiWidget implements IMidiController {
 	public XYPad(String name) {
 		super(name);
 
-		mMeter = new MaterialSprite(sMeterMat);
-		mMeterOff = new MaterialSprite(sMeterOffMat);
+		mMeter = new MaterialSprite(Materials.MC_XYPAD_INDICATOR);
+		mMeterOff = new MaterialSprite(Materials.MC_XYPAD_INDICATOR_OFF);
 
 		addSprite(mBackground);
 		addSprite(mMeter);

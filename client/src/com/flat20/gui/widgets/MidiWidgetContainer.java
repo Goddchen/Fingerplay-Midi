@@ -1,8 +1,6 @@
 package com.flat20.gui.widgets;
 
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.VelocityTracker;
 
 import com.flat20.gui.animations.Animation;
 import com.flat20.gui.animations.AnimationManager;
@@ -17,26 +15,45 @@ import com.flat20.gui.sprites.Sprite;
  */
 public class MidiWidgetContainer extends WidgetContainer {
 
-	private int mScreenWidth;
+	//private int mScreenWidth;
 	private int mScreenHeight;
 
-	private boolean mDragging = false;
+	final private AnimationManager mAnimationManager;
+
+	// Slide animation when you click the navigation buttons.
+    private Slide mSlide = null;
+
+    private boolean mDragging = false;
 	private int dragY;
 	private float mDragVelocityY = 0;
 	private DragAnimation mDragAnimation;
 
 	public MidiWidgetContainer(int screenWidth, int screenHeight) {
 		super(0, 0);
-		mScreenWidth = screenWidth;
+		//mScreenWidth = screenWidth;
 		mScreenHeight = screenHeight;
 
+		mAnimationManager = AnimationManager.getInstance();
 		mDragAnimation = new DragAnimation(this);
-		AnimationManager.getInstance().add(mDragAnimation);
+		mAnimationManager.add(mDragAnimation);
+
+		mSlide = new Slide(this, 0, y);
+	}
+
+	/**
+	 * Pauses our internal drag animation and slides to destY
+	 * @param destY
+	 */
+	public void scrollTo(int destY) {
+		mDragAnimation.isRunning = false;
+		mSlide.set(0, destY);
+
+		if (!mAnimationManager.hasAnimation(mSlide));
+			mAnimationManager.add( mSlide );
 	}
 
 	// TOOD Move to GUI
 	public void onKeyDown(int keyCode, KeyEvent event) {
-		//Widget widget = mFocusedWidget;
 		if (mFocusedWidget != null) {
 			WidgetContainer wc = (WidgetContainer) mFocusedWidget;
 			if (wc.getFocusedWidget() instanceof MidiWidget) {
@@ -69,6 +86,7 @@ public class MidiWidgetContainer extends WidgetContainer {
 	public boolean onTouchDown(int touchX, int touchY, float pressure) {
 		boolean result = super.onTouchDown(touchX, touchY, pressure);
 		if (!result) {
+			mDragAnimation.isRunning = false;
 			dragY = touchY - y;
 			mDragVelocityY = 0;
 			mDragging = true;
@@ -79,16 +97,13 @@ public class MidiWidgetContainer extends WidgetContainer {
 	@Override 
 	public boolean onTouchMove(int touchX, int touchY, float pressure) {
 		if (mDragging) {
+
 			int lastY = y;
-			//y = touchY - dragY;
-			//y = Math.max(-(this.height-mScreenHeight), Math.min(0, y));
-			setY(touchY - dragY);
+			setY(touchY - dragY); // update y
 
 			dragY += lastY-y;
 
 			mDragVelocityY = (mDragVelocityY + (y-lastY)) / 2.0f;
-
-			//mDragVelocityY += y-lastY;
 
 			return true;
 		} else
@@ -100,25 +115,20 @@ public class MidiWidgetContainer extends WidgetContainer {
 		if (mDragging) {
 			mDragAnimation.y = this.y;
 			mDragAnimation.velocityY = mDragVelocityY;
-			//Log.i("mwc", "animation velY = " + mDragAnimation.velocityY);
-			/*
-			int velY = (touchY - dragY) - y;
-			if (Math.abs(velY) > 3) {
-				int newY = Math.max(-(this.height-mScreenHeight), Math.min(0, y+(velY*12)));
-				AnimationManager.getInstance().add( new Slide(this, x, newY) );
-			}*/
+			mDragAnimation.isRunning = true;
 			mDragging = false;
 			return true;
 		} else
 			return super.onTouchUp(touchX, touchY, pressure);
 	}
-	
+
 	class DragAnimation extends Animation {
 
 		private MidiWidgetContainer mContainer;
- 
+
 		public float velocityY;
 		public float y = 0;
+		public boolean isRunning = true;
 
 		/**
 		 * A neverending animation for our MidiWidgetContainer 
@@ -133,11 +143,11 @@ public class MidiWidgetContainer extends WidgetContainer {
 
 		@Override
 		public boolean update() {
-			//y += velocityY;
-			mContainer.setY( (int)(mContainer.y + velocityY) );
-			//mContainer.y += velocityY;
-			velocityY *= 0.9f;
-			//Log.i("MidiWidgetcontainer", "velY = " + velocityY);
+			if (isRunning) {
+				y += velocityY;
+				mContainer.setY( (int)y );
+				velocityY *= 0.9f;
+			}
 			return true;
 		}
 

@@ -93,8 +93,10 @@ public class OSCConnection extends Connection {
 	}
 */
 	public void disconnect() {
-		sender.close();
-		sender = null;
+		if (sender != null) {
+			sender.close();
+			sender = null;
+		}
 		//c.dispose();
 	}
 /*

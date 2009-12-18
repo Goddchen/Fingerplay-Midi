@@ -1,32 +1,27 @@
 package com.flat20.gui.widgets;
 
-import com.flat20.fingerplay.R;
+import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
 import com.flat20.gui.sprites.SimpleSprite;
 import com.flat20.gui.sprites.Sprite;
-import com.flat20.gui.textures.NineSliceMaterial;
 import com.flat20.gui.textures.ResourceTexture;
 import com.flat20.gui.textures.TextureManager;
 
 public class FPButton extends Button {
 
-	final protected static ResourceTexture SKIN_TEXTURE = TextureManager.createResourceTexture(R.drawable.buttons_ps, 32, 64);
-	final protected static NineSliceMaterial DEFAULT_MATERIAL = new NineSliceMaterial(SKIN_TEXTURE, 0, 4, 28, 32,  0, 6, 10, 17);
-	final protected static NineSliceMaterial CLICKED_MATERIAL = new NineSliceMaterial(SKIN_TEXTURE, 0, 4, 28, 32,  17, 23, 28, 34);
-
 	protected MaterialSprite mDefault;
 	protected MaterialSprite mClicked;
 	protected Sprite mIcon;
-	
+
 	protected boolean mIsActive = false;
 
 	public FPButton(int iconResourceId, int width, int height) {
 		super(width, height);
 
-		mDefault = new MaterialSprite(DEFAULT_MATERIAL, width, height);
+		mDefault = new MaterialSprite(Materials.BUTTON, width, height);
 		addSprite(mDefault);
 
-		mClicked = new MaterialSprite(CLICKED_MATERIAL, width, height);
+		mClicked = new MaterialSprite(Materials.BUTTON_HIGHLIGHT, width, height);
 		mClicked.visible = false;
 		addSprite(mClicked);
 

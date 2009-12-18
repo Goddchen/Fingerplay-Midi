@@ -2,25 +2,25 @@ package com.flat20.gui;
 
 import com.flat20.fingerplay.R;
 import com.flat20.gui.sprites.MaterialSprite;
-import com.flat20.gui.textures.NineSliceMaterial;
-import com.flat20.gui.textures.Texture;
-import com.flat20.gui.textures.TextureManager;
 import com.flat20.gui.widgets.Button;
 import com.flat20.gui.widgets.FPButton;
+import com.flat20.gui.widgets.ScreenNavigator;
 import com.flat20.gui.widgets.WidgetContainer;
+import com.flat20.gui.widgets.ScreenNavigator.IScrollListener;
 
-public class NavigationButtons extends WidgetContainer {
-
-	final private static Texture BACKGROUND_TEXTURE = TextureManager.createResourceTexture(R.drawable.navigation_bar, 32, 16);
-	final private static NineSliceMaterial BACKGROUND_MATERIAL = new NineSliceMaterial(BACKGROUND_TEXTURE, 4, 4, 28, 12);
+public class NavigationButtons extends WidgetContainer implements IScrollListener {
 
 	final private IListener mListener;
 
 	private FPButton mButtonSettings;
 	private FPButton mButtonReleaseAll;
+	/*
 	private FPButton mButtonSliders;
 	private FPButton mButtonXYPad;
 	private FPButton mButtonPads;
+	*/
+
+	private ScreenNavigator mScreenNavigator;
 
 	// Which screen is active.
 	private FPButton mButtonActive;
@@ -30,20 +30,11 @@ public class NavigationButtons extends WidgetContainer {
 
 		mListener = listener;
 
-		MaterialSprite buttonBar = new MaterialSprite(BACKGROUND_MATERIAL, width, height);
-        //GLSprite buttonBar = new GLSprite(R.drawable.navigation_bar);
-        //buttonBar.width = width;
-        //buttonBar.height = height;
-		/*
-        int[] textureCoords = {                   
-        		0, 4, 28, 32,
-                0, 4, 12, 16};
-        buttonBar.setGrid( Grid.create9SliceGrid((int)buttonBar.width, (int)buttonBar.height, textureCoords, 32, 16) );
-        */
+		MaterialSprite buttonBar = new MaterialSprite(Materials.NAVIGATION_BAR, width, height);
 
         // Maximum button size is 48 for now.
         int buttonHeight = Math.min( (height-8-8)/3, 48);
-
+/*
         // bottom of screen
         mButtonXYPad = new FPButton(R.drawable.icon_touchpad_new, width-16, buttonHeight);
         mButtonXYPad.x = 8;
@@ -59,7 +50,7 @@ public class NavigationButtons extends WidgetContainer {
         mButtonPads.x = 8;
         mButtonPads.y = 8+buttonHeight+8+buttonHeight+8;
         mButtonPads.setListener(mButtonPadsListener);
-
+*/
         mButtonReleaseAll = new FPButton(R.drawable.icon_controller_held, width-16, buttonHeight);
         mButtonReleaseAll.x = 8;
         mButtonReleaseAll.y = height-8-buttonHeight-8-buttonHeight;
@@ -70,19 +61,39 @@ public class NavigationButtons extends WidgetContainer {
         mButtonSettings.y = height-8-buttonHeight;
         mButtonSettings.setListener(mButtonSettingsListener);
 
+        // NEW
+        mScreenNavigator = new ScreenNavigator(width-16, height - 8-buttonHeight-8-buttonHeight-8-8);
+        mScreenNavigator.x = 8;
+        mScreenNavigator.y = 8;
+        mScreenNavigator.setScrollListener(this);
+
         // top of screen
 
         addSprite(buttonBar);
         addSprite(mButtonSettings);
         addSprite(mButtonReleaseAll);
+        /*
         addSprite(mButtonSliders);
         addSprite(mButtonXYPad);
         addSprite(mButtonPads);
+        */
+        addSprite( mScreenNavigator );
         //setFixed(true);
 
-        mButtonActive = mButtonXYPad;
+        mButtonActive = mButtonSettings;
         mButtonActive.setActive(true);
 	}
+	
+	public void updateScreenHeight(int screenHeight, int totalHeight) {
+		mScreenNavigator.updateScreenHeight(screenHeight, totalHeight);
+	}
+	
+	// we could skip this and let parent talk with the navigator directly
+	@Override
+	public void onScroll(float pos) {
+		mListener.onScroll(pos);
+	}
+
 
 
 	// Handle button actions.
@@ -102,7 +113,7 @@ public class NavigationButtons extends WidgetContainer {
 		public void onPress(Button button) {}
 		public void onRelease(Button button) {}
 	};
-
+/*
 	Button.IListener mButtonPadsListener = new Button.IListener() {
 		public void onClick(Button button) {
 			mButtonActive.setActive(false);
@@ -138,12 +149,13 @@ public class NavigationButtons extends WidgetContainer {
 		public void onPress(Button button) {}
 		public void onRelease(Button button) {}
 	};
-
+*/
 	public interface IListener {
 		public void onSettingsSelected();
 		public void onReleaseAllSelected();
-		public void onPadsSelected();
-		public void onSlidersSelected();
-		public void onXYPadSelected();
+		//public void onPadsSelected();
+		//public void onSlidersSelected();
+		//public void onXYPadSelected();
+		public void onScroll(float pos);
 	}
 }

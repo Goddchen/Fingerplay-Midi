@@ -5,7 +5,6 @@ import java.io.FilenameFilter;
 
 import android.os.Environment;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.network.ConnectionManager;

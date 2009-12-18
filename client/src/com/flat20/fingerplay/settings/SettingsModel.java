@@ -3,7 +3,6 @@ package com.flat20.fingerplay.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
 import com.flat20.fingerplay.network.ConnectionManager;
@@ -47,8 +46,6 @@ public class SettingsModel {
 		mSharedPreferences = PreferenceManager.getDefaultSharedPreferences( context );
 		String type = mSharedPreferences.getString("settings_server_type", "-1");
 		serverType = Integer.parseInt(type);
-		Log.i("SettingsModel", "serverType = " + serverType);
-		//serverType = Integer.parseInt(type);
 		serverAddress = mSharedPreferences.getString("settings_server_address", null);
 		midiDevice = mSharedPreferences.getString("settings_midi_out", null);
 		layoutFile = mSharedPreferences.getString("settings_layout_file", null);

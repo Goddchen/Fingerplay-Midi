@@ -1,6 +1,8 @@
 package com.flat20.fingerplay.network;
 
-
+/**
+ * TODO: Only needs one connection at a time,
+ */
 import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +44,7 @@ public class ConnectionManager {
 
 	public void cleanup() {
 		for (Connection connection: mConnections.values()) {
-			//connection.disconnect() ?
+			connection.disconnect();
 			connection.setOnUpdateListener(null);
 		}
 	}

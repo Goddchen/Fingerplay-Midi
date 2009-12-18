@@ -1,23 +1,17 @@
 package com.flat20.gui.widgets;
 
-
-import android.util.Log;
-
-import com.flat20.fingerplay.R;
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.Parameter;
+import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
-import com.flat20.gui.textures.ResourceTexture;
-import com.flat20.gui.textures.StretchedMaterial;
-import com.flat20.gui.textures.TextureManager;
 
 public class Slider extends MidiWidget implements IMidiController {
-
+/*
 	final private static ResourceTexture sMeterTex = TextureManager.createResourceTexture(R.drawable.controllers_meter, 4, 4);
 	final private static StretchedMaterial sMeterMat = new StretchedMaterial(sMeterTex);
 	final private static ResourceTexture sMeterOffTex = TextureManager.createResourceTexture(R.drawable.controllers_meter_off, 4, 4);
 	final private static StretchedMaterial sMeterOffMat = new StretchedMaterial(sMeterOffTex);
-
+*/
 	final protected MaterialSprite mMeter;
 	final protected MaterialSprite mMeterOff;
 
@@ -43,8 +37,8 @@ public class Slider extends MidiWidget implements IMidiController {
 	public Slider(String name) {
 		super(name);
 
-		mMeter = new MaterialSprite(sMeterMat);
-		mMeterOff = new MaterialSprite(sMeterOffMat);
+		mMeter = new MaterialSprite(Materials.MC_METER);
+		mMeterOff = new MaterialSprite(Materials.MC_METER_OFF);
 
 		addSprite(mBackground);
 		addSprite(mMeterOff);

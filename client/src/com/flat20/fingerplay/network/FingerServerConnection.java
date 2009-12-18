@@ -27,10 +27,6 @@ import android.util.Log;
 
 /**
  * 
- * TODO If we only get half a message from the server the app freaks out.
- * We need to send a header with each message specifying the length of the
- * incoming message so the read code can loop until it received everything.
- * 
  * TODO Multicast to find server address doesn't work yet.
  * Maybe a phone limitation?
  * 
@@ -236,35 +232,10 @@ public class FingerServerConnection extends Connection implements IReceiver {
 
 			while (running) {
 				try {
-
 					if (in.available() > 0) {
-						
 						mReader.readCommand();
-						/*
-						byte command = in.readByte();
-	
-						switch (command) {
-							case SocketCommand.COMMAND_MIDI_SHORT_MESSAGE:
-								FingerEncoder.decode(msm, command, in);
-								if (listener != null)
-				    				listener.onSocketCommand(msm);
-								break;
-							case SocketCommand.COMMAND_MIDI_DEVICE_LIST:
-								FingerEncoder.decode(ssm, command, in);
-								if (listener != null)
-				    				listener.onSocketCommand(ssm);
-								break;
-							case SocketCommand.COMMAND_VERSION:
-								FingerEncoder.decode(ssm, command, in);
-								if (listener != null)
-				    				listener.onSocketCommand(ssm);
-								break;
-							default:
-								System.out.println("Unknown command: " + command);
-								break;
-						}*/
 					}
-					Thread.sleep(50);
+					Thread.sleep(20);
 				} catch (SocketTimeoutException e) {
 					// normal behaviour from socket reads.
 					Log.i("FSC", "SocketTimeoutException " + e);
@@ -277,7 +248,7 @@ public class FingerServerConnection extends Connection implements IReceiver {
 					} catch (Exception e2) {
 						System.out.println("desperate close!" + e2);
 					}
-					//setRunning(false);
+
 					// TODO Run this in disconnect() ??
     				if (listener != null)
     					listener.onDisconnect();
@@ -285,28 +256,6 @@ public class FingerServerConnection extends Connection implements IReceiver {
 
 			}
 
-/*    		
-    		while (running) {
-	    		try {
-	    			int numRead = in.read(buffer);
-	    			if (numRead == -1) {
-	    				//disconnect();
-	    				setRunning(false);
-	    				if (listener != null)
-	    					listener.onDisconnect();
-	    				//mHandler.post(mSocketDisconnected);
-	    			} else if (listener != null) {
-	    				//Log.i("fsc", new String(buffer));
-	    				listener.onRead(buffer, numRead);
-	    			}
-	    				//mHandler.post(mDispatchSocketReadEvent);
-	    		} catch (SocketTimeoutException e) {
-	    			
-	    		} catch (IOException e) {
-	    			Log.i("sc.rt", e.toString());
-	    		}
-    		}
-*/
     	}
     }
 

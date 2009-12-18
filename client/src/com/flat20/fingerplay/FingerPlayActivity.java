@@ -15,8 +15,6 @@ import com.flat20.fingerplay.settings.SettingsModel;
 import com.flat20.fingerplay.settings.SettingsView;
 import com.flat20.gui.InteractiveActivity;
 import com.flat20.gui.NavigationButtons;
-import com.flat20.gui.animations.AnimationManager;
-import com.flat20.gui.animations.Slide;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.flat20.gui.LayoutManager;
@@ -31,12 +29,8 @@ public class FingerPlayActivity extends InteractiveActivity {
     
     private Logo mLogo;
 
-    private Slide mWidgetsSlide = null;
-    //private Slide mLogoSlide = null;
-
     private NavigationButtons mNavigationButtons; 
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -61,9 +55,8 @@ public class FingerPlayActivity extends InteractiveActivity {
 	protected void onCreateGraphics() {
 
 		// Draw the FingerPlay logo as our background.
-		mLogo = new Logo();
-		mLogo.x = 0;
-		mLogo.y = -24;
+		// Logo uses screenWidth and height and tries to fill it
+		mLogo = new Logo(mWidth, mHeight);
 		mRenderer.addSprite(mLogo);
 
 
@@ -79,19 +72,18 @@ public class FingerPlayActivity extends InteractiveActivity {
         mMidiWidgetsContainer = new MidiWidgetContainer(mWidth, mHeight);
 
         // TODO Make LayoutManager part of GUI lib
-        //File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/layout.xml");
         File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/" + mSettingsModel.layoutFile);
         if (xmlFile != null && xmlFile.canRead())
         	LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
         else
-        	LayoutManager.loadXML(mMidiWidgetsContainer,  getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth, mHeight);
+        	LayoutManager.loadXML(mMidiWidgetsContainer, getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth, mHeight);
 
         // Add all midi controllers to the manager
         mMidiControllerManager.addMidiControllersIn(mMidiWidgetsContainer);
 
         mRenderer.addSprite( mMidiWidgetsContainer );
 
-
+        mNavigationButtons.updateScreenHeight( 320, mMidiWidgetsContainer.height );
         // Navigation goes on top.
         mRenderer.addSprite( mNavigationButtons );
 	}
@@ -109,39 +101,22 @@ public class FingerPlayActivity extends InteractiveActivity {
 		public void onReleaseAllSelected() {
 			mMidiControllerManager.releaseAllHeld();
 		}
-
+/*
 		@Override
 		public void onPadsSelected() {
-			if (mWidgetsSlide != null)
-				AnimationManager.getInstance().remove(mWidgetsSlide);
-			mWidgetsSlide = new Slide(mMidiWidgetsContainer, 0, -640);
-			AnimationManager.getInstance().add( mWidgetsSlide );
-
-			//mNavigationButtons.setActiveScreen();
-			//Slide moveBackground = new Slide(mLogo, 0, -192);
-			//AnimationManager.getInstance().add(moveBackground);
+			mMidiWidgetsContainer.scrollTo(-640);
 		}
 
 		@Override
 		public void onSlidersSelected() {
-			if (mWidgetsSlide != null)
-				AnimationManager.getInstance().remove(mWidgetsSlide);
-			mWidgetsSlide = new Slide(mMidiWidgetsContainer, 0, -320);
-			AnimationManager.getInstance().add( mWidgetsSlide ); 
-			//Slide moveBackground = new Slide(mLogo, 0, -96);
-			//AnimationManager.getInstance().add(moveBackground);
+			mMidiWidgetsContainer.scrollTo(-320);
 		}
 
 		@Override
 		public void onXYPadSelected() {
-			if (mWidgetsSlide != null)
-				AnimationManager.getInstance().remove(mWidgetsSlide);
-			mWidgetsSlide = new Slide(mMidiWidgetsContainer, 0, 0);
-			AnimationManager.getInstance().add( mWidgetsSlide );
-			//Slide moveBackground = new Slide(mLogo, 0, 0);
-			//AnimationManager.getInstance().add(moveBackground);
+			mMidiWidgetsContainer.scrollTo(0);
 		}
-
+*/
 		@Override
 		public void onSettingsSelected() {
 			Intent settingsIntent = new Intent(getApplicationContext(), SettingsView.class);
@@ -149,11 +124,15 @@ public class FingerPlayActivity extends InteractiveActivity {
 			startActivity( settingsIntent );
 		}
 
+		@Override
+		public void onScroll(float pos) {
+			mMidiWidgetsContainer.scrollTo((int) -(pos*mMidiWidgetsContainer.height));
+		}
+
 	};
 
 	@Override
 	protected void onDestroy() {
-    	//ConnectionManager.getInstance().disconnect();
     	ConnectionManager.getInstance().cleanup();
     	Log.i("fpa", "onDestroy! System.exit");
 		super.onDestroy();

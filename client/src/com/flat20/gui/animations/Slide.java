@@ -1,7 +1,5 @@
 package com.flat20.gui.animations;
 
-import android.util.Log;
-
 import com.flat20.gui.sprites.Sprite;
 
 public class Slide extends Animation {
@@ -25,10 +23,15 @@ public class Slide extends Animation {
 	 */
 	public Slide(Sprite sprite, int destX, int destY) {
 		mSprite = sprite;
+		set(destX, destY);
+	}
+
+	public void set(int destX, int destY) {
 		mFixedDestX = destX << 16;
 		mFixedDestY = destY << 16;
-		mFixedCurrentX = sprite.x << 16;
-		mFixedCurrentY = sprite.y << 16;
+		mFixedCurrentX = mSprite.x << 16;
+		mFixedCurrentY = mSprite.y << 16;
+		timer = 0;
 	}
 
 	@Override

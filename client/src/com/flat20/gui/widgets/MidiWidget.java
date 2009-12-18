@@ -1,29 +1,13 @@
 package com.flat20.gui.widgets;
 
-import com.flat20.fingerplay.R;
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.IOnControlChangeListener;
+import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
-import com.flat20.gui.textures.NineSliceMaterial;
-import com.flat20.gui.textures.ResourceTexture;
-import com.flat20.gui.textures.TextureManager;
-import com.flat20.gui.textures.TiledMaterial;
 
 public abstract class MidiWidget extends Widget implements IMidiController {
 
 	final protected static int SHADOW_PADDING = 6;
-	
-	final protected static ResourceTexture SHADOW_TEXTURE = TextureManager.createResourceTexture(R.drawable.dropshadow_50, 32, 32);
-	final protected static NineSliceMaterial SHADOW_MATERIAL = new NineSliceMaterial(SHADOW_TEXTURE, 12, 12, 20, 20);
-
-	final private static ResourceTexture sBackgroundTex = TextureManager.createResourceTexture(R.drawable.controllers_background, 4, 4);
-	final private static ResourceTexture sOutlinesTex = TextureManager.createResourceTexture(R.drawable.controllers_outlines, 64, 256);
-	final private static ResourceTexture sTvScanlinesTex = TextureManager.createResourceTexture(R.drawable.controllers_tv_scanlines, 4, 4);
-
-	final private static TiledMaterial sBackgroundMat = new TiledMaterial(sBackgroundTex);
-	final private static NineSliceMaterial sOutlineMat = new NineSliceMaterial(sOutlinesTex, 0,9,52,58,  0,6,58,64);
-	final private static NineSliceMaterial sOutlineSelectedMat = new NineSliceMaterial(sOutlinesTex, 0,16,48,64,	65,75,124,134);
-	final private static TiledMaterial sTvScanlinesMat = new TiledMaterial(sTvScanlinesTex);
 
 	final protected MaterialSprite mShadow;
 
@@ -42,19 +26,19 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 
 		setName(name);
 
-        mShadow = new MaterialSprite(SHADOW_MATERIAL);
+        mShadow = new MaterialSprite(Materials.SHADOW);
         mShadow.x = -SHADOW_PADDING;
         mShadow.y = -SHADOW_PADDING;
         addSprite( mShadow );
 
-		mBackground = new MaterialSprite(sBackgroundMat);
+		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
 
-		mOutline = new MaterialSprite(sOutlineMat);
+		mOutline = new MaterialSprite(Materials.MC_OUTLINE);
 
-		mOutlineSelected = new MaterialSprite(sOutlineSelectedMat);
+		mOutlineSelected = new MaterialSprite(Materials.MC_OUTLINE_SELECTED);
 		mOutlineSelected.visible = false;
 
-		mTvScanlines = new MaterialSprite(sTvScanlinesMat);
+		mTvScanlines = new MaterialSprite(Materials.MC_TVSCANLINES);
 	}
 
 	public void setName(String name) {
