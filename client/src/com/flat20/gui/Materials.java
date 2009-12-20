@@ -10,14 +10,20 @@ import com.flat20.gui.textures.TiledMaterial;
 
 public class Materials {
 
+	// Logo
+	final public static Texture LOGO_TEXTURE = TextureManager.createResourceTexture(R.drawable.fingerplay_background_darker, 512, 512);
+	
 	// NavigationBar
-	final private static Texture NAVIGATION_BAR_TEXTURE = TextureManager.createResourceTexture(R.drawable.navigation_bar, 32, 16);
-	final public static NineSliceMaterial NAVIGATION_BAR = new NineSliceMaterial(NAVIGATION_BAR_TEXTURE, 4, 4, 28, 12);
+	final private static Texture NAVIGATION_BAR_TEXTURE = TextureManager.createResourceTexture(R.drawable.navigation_bar, 32, 48);
+	final public static NineSliceMaterial NAVIGATION_BAR = new NineSliceMaterial(NAVIGATION_BAR_TEXTURE, 0, 4, 28, 32,  0, 6, 10, 16);
+	final public static NineSliceMaterial NAVIGATION_SCROLLER_BACKGROUND = new NineSliceMaterial(NAVIGATION_BAR_TEXTURE, 0, 4, 28, 32,  16, 22, 26, 32);
+	final public static NineSliceMaterial NAVIGATION_SCROLLER_THUMB = new NineSliceMaterial(NAVIGATION_BAR_TEXTURE, 0, 4, 28, 32,  32, 38, 42, 48);
 
 	// FPButton
 	final private static ResourceTexture BUTTON_TEXTURE = TextureManager.createResourceTexture(R.drawable.buttons_ps, 32, 64);
-	final public static NineSliceMaterial BUTTON = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  0, 6, 10, 17);
-	final public static NineSliceMaterial BUTTON_HIGHLIGHT = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  17, 23, 28, 34);
+	final public static NineSliceMaterial BUTTON = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  0, 6, 10, 16);
+	final public static NineSliceMaterial BUTTON_HIGHLIGHT = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  16, 22, 26, 32);
+	final public static NineSliceMaterial BUTTON_GREY = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  32, 38, 42, 48);
 
 	// MidiWidgets
 	final private static ResourceTexture SHADOW_TEXTURE = TextureManager.createResourceTexture(R.drawable.dropshadow_50, 32, 32);
@@ -28,9 +34,9 @@ public class Materials {
 	final public static NineSliceMaterial MC_OUTLINE_SELECTED = new NineSliceMaterial(MC_OUTLINE_TEXTURE, 0,16,48,64,	65,75,124,134);
 
 	final private static ResourceTexture MC_BACKGROUND_TEXTURE = TextureManager.createResourceTexture(R.drawable.controllers_background, 4, 4);
-	final private static ResourceTexture MC_TVSCANLINES_TEXTURE = TextureManager.createResourceTexture(R.drawable.controllers_tv_scanlines, 4, 4);
-
 	final public static TiledMaterial MC_BACKGROUND = new TiledMaterial(MC_BACKGROUND_TEXTURE);
+
+	final private static ResourceTexture MC_TVSCANLINES_TEXTURE = TextureManager.createResourceTexture(R.drawable.controllers_tv_scanlines, 4, 4);
 	final public static TiledMaterial MC_TVSCANLINES = new TiledMaterial(MC_TVSCANLINES_TEXTURE);
 
 	final private static ResourceTexture MC_METER_TEXTURE = TextureManager.createResourceTexture(R.drawable.controllers_meter, 4, 4);

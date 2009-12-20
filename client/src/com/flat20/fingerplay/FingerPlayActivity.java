@@ -14,7 +14,7 @@ import com.flat20.fingerplay.network.ConnectionManager;
 import com.flat20.fingerplay.settings.SettingsModel;
 import com.flat20.fingerplay.settings.SettingsView;
 import com.flat20.gui.InteractiveActivity;
-import com.flat20.gui.NavigationButtons;
+import com.flat20.gui.NavigationOverlay;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.flat20.gui.LayoutManager;
@@ -29,7 +29,7 @@ public class FingerPlayActivity extends InteractiveActivity {
     
     private Logo mLogo;
 
-    private NavigationButtons mNavigationButtons; 
+    private NavigationOverlay mNavigationButtons; 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,10 +60,6 @@ public class FingerPlayActivity extends InteractiveActivity {
 		mRenderer.addSprite(mLogo);
 
 
-		// Navigation
-        mNavigationButtons = new NavigationButtons(64, mHeight-16, mNavigationListener);
-        mNavigationButtons.x = mWidth - mNavigationButtons.width+2;
-        mNavigationButtons.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
 
 
         // We're drawing all controller screens in their own container so we can move them
@@ -83,7 +79,11 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         mRenderer.addSprite( mMidiWidgetsContainer );
 
-        mNavigationButtons.updateScreenHeight( 320, mMidiWidgetsContainer.height );
+		// Navigation
+        mNavigationButtons = new NavigationOverlay(64, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mHeight);
+        mNavigationButtons.x = mWidth - mNavigationButtons.width+2;
+        mNavigationButtons.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
+        //mNavigationButtons.setScreenHeight( 320 );
         // Navigation goes on top.
         mRenderer.addSprite( mNavigationButtons );
 	}
@@ -95,40 +95,26 @@ public class FingerPlayActivity extends InteractiveActivity {
 	}
 
 
-	NavigationButtons.IListener mNavigationListener = new NavigationButtons.IListener() {
+	NavigationOverlay.IListener mNavigationListener = new NavigationOverlay.IListener() {
 
 		@Override
 		public void onReleaseAllSelected() {
 			mMidiControllerManager.releaseAllHeld();
 		}
-/*
-		@Override
-		public void onPadsSelected() {
-			mMidiWidgetsContainer.scrollTo(-640);
-		}
 
-		@Override
-		public void onSlidersSelected() {
-			mMidiWidgetsContainer.scrollTo(-320);
-		}
-
-		@Override
-		public void onXYPadSelected() {
-			mMidiWidgetsContainer.scrollTo(0);
-		}
-*/
 		@Override
 		public void onSettingsSelected() {
 			Intent settingsIntent = new Intent(getApplicationContext(), SettingsView.class);
 			settingsIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 			startActivity( settingsIntent );
 		}
-
+/*
 		@Override
 		public void onScroll(float pos) {
+			Log.i("FPA", "onScroll " + pos + " = " + (pos*mMidiWidgetsContainer.height));
 			mMidiWidgetsContainer.scrollTo((int) -(pos*mMidiWidgetsContainer.height));
 		}
-
+*/
 	};
 
 	@Override

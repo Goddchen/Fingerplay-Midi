@@ -1,7 +1,7 @@
 package com.flat20.fingerplay.network;
 
 /**
- * TODO: Only needs one connection at a time,
+ * TODO: Only need one connection at a time.
  */
 import java.net.ConnectException;
 import java.util.ArrayList;

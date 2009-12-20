@@ -1,11 +1,10 @@
 package com.flat20.gui.sprites;
 
-import com.flat20.fingerplay.R;
-import com.flat20.gui.textures.TextureManager;
+import com.flat20.gui.Materials;
 
 public class Logo extends SimpleSprite {
 	public Logo(int screenWidth, int screenHeight) {
-		super( TextureManager.createResourceTexture(R.drawable.fingerplay_background_darker, 512, 512) );
+		super( Materials.LOGO_TEXTURE );
 		
 		// Make sure our logo is drawn over the whole screen (or more)
 		if (screenWidth > width || screenHeight > height) {

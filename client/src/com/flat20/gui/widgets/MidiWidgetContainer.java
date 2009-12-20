@@ -6,6 +6,8 @@ import com.flat20.gui.animations.Animation;
 import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Slide;
 import com.flat20.gui.sprites.Sprite;
+import com.flat20.gui.widgets.IScrollListener;
+import com.flat20.gui.widgets.Scrollbar.IScrollable;
 
 /**
  * Expands after added content size.
@@ -13,7 +15,7 @@ import com.flat20.gui.sprites.Sprite;
  * @author andreas
  *
  */
-public class MidiWidgetContainer extends WidgetContainer {
+public class MidiWidgetContainer extends WidgetContainer implements IScrollable {
 
 	//private int mScreenWidth;
 	private int mScreenHeight;
@@ -27,6 +29,8 @@ public class MidiWidgetContainer extends WidgetContainer {
 	private int dragY;
 	private float mDragVelocityY = 0;
 	private DragAnimation mDragAnimation;
+	
+	private IScrollListener mScrollListener;
 
 	public MidiWidgetContainer(int screenWidth, int screenHeight) {
 		super(0, 0);
@@ -44,12 +48,23 @@ public class MidiWidgetContainer extends WidgetContainer {
 	 * Pauses our internal drag animation and slides to destY
 	 * @param destY
 	 */
+	@Override
 	public void scrollTo(int destY) {
 		mDragAnimation.isRunning = false;
 		mSlide.set(0, destY);
 
 		if (!mAnimationManager.hasAnimation(mSlide));
 			mAnimationManager.add( mSlide );
+	}
+
+	@Override
+	public int getHeight() {
+		return height;
+	}
+
+	@Override
+	public void setUpdateListener(IScrollListener listener) {
+		mScrollListener = listener;
 	}
 
 	// TOOD Move to GUI
@@ -64,6 +79,9 @@ public class MidiWidgetContainer extends WidgetContainer {
 		//return super.onKeyDown(keyCode, event);
 	}
 
+	/*
+	 * Adds the Sprite to the list and expands width and height.
+	 */
 	@Override
 	public void addSprite(Sprite sprite) {
 		super.addSprite(sprite);
@@ -75,11 +93,12 @@ public class MidiWidgetContainer extends WidgetContainer {
 		if (sprite.x + sprite.width > width) {
 			width = sprite.x + sprite.width;
 		}
-
 	}
-	
+
 	public void setY(int newY) {
 		y = Math.max(-(this.height-mScreenHeight), Math.min(0, newY));
+		if (mScrollListener != null)
+			mScrollListener.onScrollChanged(y);
 	}
 
 	@Override
@@ -126,7 +145,7 @@ public class MidiWidgetContainer extends WidgetContainer {
 
 		private MidiWidgetContainer mContainer;
 
-		public float velocityY;
+		public float velocityY = 0;
 		public float y = 0;
 		public boolean isRunning = true;
 
@@ -144,9 +163,14 @@ public class MidiWidgetContainer extends WidgetContainer {
 		@Override
 		public boolean update() {
 			if (isRunning) {
-				y += velocityY;
-				mContainer.setY( (int)y );
-				velocityY *= 0.9f;
+				if (Math.abs(velocityY) < 0.1) {
+					isRunning = false;
+				} else {
+					y += velocityY;
+					mContainer.setY( (int)y );
+					velocityY *= 0.9f;
+				}
+				
 			}
 			return true;
 		}

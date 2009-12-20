@@ -7,13 +7,13 @@ import com.flat20.gui.sprites.MaterialSprite;
 
 public class Pad extends MidiWidget implements IMidiController {
 
-	//final private static ResourceTexture sMeterTex = TextureManager.createResourceTexture(R.drawable.controllers_meter, 4, 4);
-	//final private static StretchedMaterial sMeterMat = new StretchedMaterial(sMeterTex);
-	//final private static ResourceTexture sMeterOffTex = TextureManager.createResourceTexture(R.drawable.controllers_meter_off, 4, 4);
-	//final private static StretchedMaterial sMeterOffMat = new StretchedMaterial(sMeterOffTex);
+	// Shadow would be a skin class.
+	final protected static int SHADOW_PADDING = 6;
+	final protected MaterialSprite mShadow;
 
-	final protected MaterialSprite mMeter;
-	//final protected MaterialSprite mMeterOff;
+	final private MaterialSprite mDefault;
+	final private MaterialSprite mClicked;
+
 
 	// IMidiController implementations and variables.
 
@@ -34,26 +34,18 @@ public class Pad extends MidiWidget implements IMidiController {
 
 	public Pad(String name) {
 		super(name);
+		
+		mShadow = new MaterialSprite(Materials.SHADOW);
+        mShadow.x = -SHADOW_PADDING;
+        mShadow.y = -SHADOW_PADDING;
+        addSprite( mShadow );
 
-		mMeter = new MaterialSprite(Materials.MC_METER);
-		//mMeterOff = new MaterialSprite(sMeterOffMat);
+		mDefault = new MaterialSprite(Materials.BUTTON_GREY, width, height);
+		addSprite(mDefault);
 
-		addSprite(mBackground);
-		addSprite(mMeter);
-		addSprite(mOutline);
-		addSprite(mOutlineSelected);
-		//addSprite(mTvScanlines);
-
-		mBackground.x = 1;
-		mBackground.y = 1;
-
-		mMeter.visible = false;
-
-        mOutlineSelected.x = -3;
-        mOutlineSelected.y = -3;
-
-		mTvScanlines.x = 2;
-		mTvScanlines.y = 2;
+		mClicked = new MaterialSprite(Materials.BUTTON_HIGHLIGHT, width, height);
+		mClicked.visible = false;
+		addSprite(mClicked);
 
 		setSize(32, 32);
 	}
@@ -61,7 +53,10 @@ public class Pad extends MidiWidget implements IMidiController {
 	public void setSize(int w, int h) {
 		super.setSize(w, h);
 
-		mMeter.setSize(w-2, h-2);
+		mShadow.setSize(w + (SHADOW_PADDING*2), h + (SHADOW_PADDING*2));
+
+		mDefault.setSize(w, h);
+		mClicked.setSize(w, h);
 	}
 
 	@Override
@@ -104,13 +99,13 @@ public class Pad extends MidiWidget implements IMidiController {
 	@Override
 	protected void press(float pressure) {
 		sendNoteOn(0, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
-		mMeter.visible = true;
+		mClicked.visible = true;
 	}
 	
 	@Override
 	protected void release(float pressure) {
 		sendNoteOff(CC_TOUCH, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
-		mMeter.visible = false;
+		mClicked.visible = false;
 	}
 
 }

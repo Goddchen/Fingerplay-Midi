@@ -2,21 +2,19 @@ package com.flat20.gui.widgets;
 
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.IOnControlChangeListener;
-import com.flat20.gui.Materials;
-import com.flat20.gui.sprites.MaterialSprite;
 
 public abstract class MidiWidget extends Widget implements IMidiController {
-
+/*
 	final protected static int SHADOW_PADDING = 6;
 
 	final protected MaterialSprite mShadow;
 
+	// We need a skinning class
 	final protected MaterialSprite mBackground;
-	//final protected MaterialSprite mMeter;
 	final protected MaterialSprite mOutline;
 	final protected MaterialSprite mOutlineSelected;
 	final protected MaterialSprite mTvScanlines;
-
+*/
 	protected String mName = null;
 
 	protected boolean mHold = false;
@@ -25,7 +23,7 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 		super();
 
 		setName(name);
-
+/*
         mShadow = new MaterialSprite(Materials.SHADOW);
         mShadow.x = -SHADOW_PADDING;
         mShadow.y = -SHADOW_PADDING;
@@ -39,6 +37,7 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 		mOutlineSelected.visible = false;
 
 		mTvScanlines = new MaterialSprite(Materials.MC_TVSCANLINES);
+		*/
 	}
 
 	public void setName(String name) {
@@ -48,18 +47,6 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 		return mName;
 	}
 /*
-	@Override
-	public String[] getParameters() {
-		return mParameters;
-	}
-*/
-/*
-	@Override
-	public int getNumControllers() {
-		return mNumControllers;
-	}
-*/
-
 	public void setSize(int w, int h) {
 		super.setSize(w, h);
 
@@ -73,7 +60,7 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 
 		mTvScanlines.setSize(w-4, h-4);
 	}
-
+*/
 	public void sendControlChange(int index, int value) {
 		if (listener != null) {
 			listener.onControlChange(this, index, value);
@@ -122,7 +109,7 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 		
 	}
 
-
+/*
 	@Override
 	public void onFocusChanged(boolean focus) {
 		super.onFocusChanged(focus);
@@ -141,7 +128,7 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 			//mShadow.setSize(width + (SHADOW_PADDING*2), height + (SHADOW_PADDING*2));
 		}
 	}
-
+*/
 
 
 	protected IOnControlChangeListener listener;

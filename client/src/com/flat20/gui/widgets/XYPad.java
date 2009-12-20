@@ -5,7 +5,7 @@ import com.flat20.fingerplay.midicontrollers.Parameter;
 import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
 
-public class XYPad extends MidiWidget implements IMidiController {
+public class XYPad extends DefaultMidiWidget implements IMidiController {
 /*
 	final private static ResourceTexture sMeterTex = TextureManager.createResourceTexture(R.drawable.touchpad_meter, 32, 32);
 	final private static StretchedMaterial sMeterMat = new StretchedMaterial(sMeterTex);
