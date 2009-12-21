@@ -13,6 +13,7 @@ public class Scrollbar extends Widget implements IScrollListener {
 
 	private MaterialSprite mBackground;
 	private MaterialSprite mThumb;
+	private MaterialSprite mThumbHighlight;
 
 	private IScrollable mTarget;
 	private int mVisibleArea; // the screen height for our fullscreen scroll.
@@ -33,6 +34,11 @@ public class Scrollbar extends Widget implements IScrollListener {
 		mThumb.x = 1;
 		addSprite(mThumb);
 
+		mThumbHighlight = new MaterialSprite(Materials.NAVIGATION_SCROLLER_THUMB_HIGHLIGHT, width-2, height);
+		mThumbHighlight.x = 1;
+		mThumbHighlight.visible = false;
+		addSprite(mThumbHighlight);
+
         setSize(width, height);
 	}
 
@@ -43,6 +49,7 @@ public class Scrollbar extends Widget implements IScrollListener {
 
 		int realY = Math.max(0, Math.min(height-mThumb.height, touchY));
 		mThumb.y = realY;
+		mThumbHighlight.y = mThumb.y;
 	}
 
 	@Override
@@ -53,6 +60,13 @@ public class Scrollbar extends Widget implements IScrollListener {
 
 		float dh = mVisibleArea / (float)mTarget.getHeight();
 		mThumb.setSize(mThumb.width, (int)(dh*height));
+		mThumbHighlight.setSize(mThumb.width, mThumb.height);
+	}
+
+	@Override
+	public boolean onTouchDown(int touchX, int touchY, float pressure) {
+		mThumbHighlight.visible = true;
+		return true;
 	}
 
 	@Override
@@ -63,33 +77,34 @@ public class Scrollbar extends Widget implements IScrollListener {
 
 	@Override
 	public boolean onTouchUp(int touchX, int touchY, float pressure) {
+		mThumbHighlight.visible = false;
 		snap(touchY);
 		return true;
 	}
 
 	@Override
 	public boolean onTouchUpOutside(int touchX, int touchY, float pressure) {
+		mThumbHighlight.visible = false;
 		snap(touchY);
 		return true;
 	}
 
 	private void snap(int touchY) {
 		int sy = (int)(touchY / (float)mThumb.height);
-		int scrollY = sy*mThumb.height + (mThumb.height>>1);
-		//Log.i("Scrollbar", "snap touchY = " + touchY + ", to " + scrollY);
+		int scrollY = sy*(mThumb.height+1) + (mThumb.height>>1);
 		scroll( scrollY );
 	}
 
 	private void scroll(int touchY) {
-		// keep it inside our area.
+		// clamp y inside our height.
 		int realY = Math.max(0, Math.min(height-mThumb.height, touchY - (mThumb.height>>1)));
-		//Log.i("Scrollbar", "touchY = " + touchY + ", th: " + mThumb.height + ", h: " + height + " realY: " + realY);
 		mThumb.y = realY;
+		mThumbHighlight.y = mThumb.y;
 		float dy = realY / (float)height;
 
+		// animates to y. animation could be done in this class
 		mTarget.scrollTo((int) -(dy*mTarget.getHeight()));
 	}
-
 
 	public interface IScrollable {
 		public int getHeight();

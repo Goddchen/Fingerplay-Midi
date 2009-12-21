@@ -1,5 +1,14 @@
 package com.flat20.gui.widgets;
 
+import java.nio.IntBuffer;
+
+import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11Ext;
+
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.opengl.GLUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import com.flat20.gui.animations.Animation;
@@ -176,5 +185,88 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 		}
 
 	}
+
+
+/*
+	private int mTextureID;
+	boolean firstTime = true;
+
+	@Override
+	public void draw(GL10 gl) {
+		super.draw(gl);
+
+		if (firstTime) {
+			Log.i("first", "time");
+			Bitmap b = toBitmap(0, 0, width, height, gl);
+			Log.i("first", "bitmap = " + b);
+			mTextureID = createTextureFromBitmap(gl, b);
+			Log.i("first", "tID = " + mTextureID);
+			firstTime = false;
+			
+			
+			
+		}
+		
+		gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
+
+		//gl.glPushMatrix();
+		//gl.glTranslatef(0, 0, 0);
+
+		((GL11Ext) gl).glDrawTexfOES(20, 20, 1, 64, 64);
+		// 8k / 5sec with draw call.
+		//mGrid.draw(gl);
+		
+		//gl.glPopMatrix();
+
+	}
+*/
+	protected Bitmap toBitmap(int x, int y, int w, int h, GL10 gl) {   
+         final int b[] = new int[w*h]; 
+         final int bt[] = new int[w*h]; 
+         final IntBuffer ib = IntBuffer.wrap(b);
+
+         gl.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib); 
+         for(int by=0; by<h; by++) { 
+              for(int bx=0; bx<w; bx++) { 
+                   //correction of R and B 
+                   int pix = b[by*w+bx]; 
+                   int pb = (pix>>16)&0xff; 
+                   int pr = (pix<<16)&0x00ff0000; 
+                   int pix1 = (pix&0xff00ff00) | pr | pb; 
+                   //correction of rows 
+                   bt[(h-by-1)*w+bx] = pix1; 
+              } 
+         }
+         return Bitmap.createBitmap(bt, w, h, Config.ALPHA_8); 
+    } 
+
+    private static int createTextureFromBitmap(GL10 gl, Bitmap bitmap) {
+        int textureId = -1;
+        if (gl != null) {
+        	final int[] textureNameWorkspace = new int[1];
+            gl.glGenTextures(1, textureNameWorkspace, 0);
+
+            textureId = textureNameWorkspace[0];
+            gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId);
+
+            gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MIN_FILTER, GL10.GL_NEAREST);
+            gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+
+            gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_S, GL10.GL_REPEAT);//REPEAT
+            gl.glTexParameterf(GL10.GL_TEXTURE_2D, GL10.GL_TEXTURE_WRAP_T, GL10.GL_REPEAT);
+
+            gl.glTexEnvf(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_REPLACE);
+
+            GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
+
+            int error = gl.glGetError();
+            if (error != GL10.GL_NO_ERROR) {
+                Log.e("TextureManager", "Texture Load GLError: " + error);
+            }
+        
+        }
+
+        return textureId;
+    }
 
 }

@@ -12,7 +12,7 @@ import com.flat20.gui.sprites.MaterialSprite;
  */
 public abstract class DefaultMidiWidget extends MidiWidget {
 
-	final protected static int SHADOW_PADDING = 6;
+	final protected static int SHADOW_PADDING = 5;
 
 	final protected MaterialSprite mShadow;
 
@@ -40,7 +40,7 @@ public abstract class DefaultMidiWidget extends MidiWidget {
 		mTvScanlines = new MaterialSprite(Materials.MC_TVSCANLINES);
 
 	}
-	
+
 	@Override
 	public void setSize(int w, int h) {
 		super.setSize(w, h);

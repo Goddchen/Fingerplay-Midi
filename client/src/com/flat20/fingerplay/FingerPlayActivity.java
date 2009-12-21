@@ -30,7 +30,7 @@ public class FingerPlayActivity extends InteractiveActivity {
     private Logo mLogo;
 
     private NavigationOverlay mNavigationButtons; 
-
+ 
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
