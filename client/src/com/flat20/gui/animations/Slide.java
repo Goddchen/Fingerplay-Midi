@@ -1,5 +1,7 @@
 package com.flat20.gui.animations;
 
+import android.util.Log;
+
 import com.flat20.gui.sprites.Sprite;
 
 public class Slide extends Animation {
@@ -37,11 +39,19 @@ public class Slide extends Animation {
 	@Override
 	public boolean update() {
 		// mul needs to be shifted back from <<32 to <<16
-		mFixedCurrentX += (mFixedDestX - mFixedCurrentX) >> 3;
-		mFixedCurrentY += (mFixedDestY - mFixedCurrentY) >> 3;
+		mFixedCurrentX += (mFixedDestX - mFixedCurrentX) >> 2;
+		mFixedCurrentY += (mFixedDestY - mFixedCurrentY) >> 2;
 		mSprite.x = mFixedCurrentX >> 16;
 		mSprite.y = mFixedCurrentY >> 16;
-		return (++timer < 30);
+
+		// Finished check
+		if ( (++timer < 30) )
+			return true;
+		else {
+			mSprite.x = mFixedDestX >> 16;
+			mSprite.y = mFixedDestY >> 16;
+			return false;
+		}
 	}
 
 }

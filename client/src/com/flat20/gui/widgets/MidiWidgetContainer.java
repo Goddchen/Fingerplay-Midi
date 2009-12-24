@@ -3,6 +3,7 @@ package com.flat20.gui.widgets;
 import java.nio.IntBuffer;
 
 import javax.microedition.khronos.opengles.GL10;
+import javax.microedition.khronos.opengles.GL11;
 import javax.microedition.khronos.opengles.GL11Ext;
 
 import android.graphics.Bitmap;
@@ -14,7 +15,11 @@ import android.view.KeyEvent;
 import com.flat20.gui.animations.Animation;
 import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Slide;
+import com.flat20.gui.sprites.MaterialSprite;
 import com.flat20.gui.sprites.Sprite;
+import com.flat20.gui.textures.BitmapTexture;
+import com.flat20.gui.textures.TextureManager;
+import com.flat20.gui.textures.TiledMaterial;
 import com.flat20.gui.widgets.IScrollListener;
 import com.flat20.gui.widgets.Scrollbar.IScrollable;
 
@@ -186,8 +191,10 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 
 	}
 
-
 /*
+	private TiledMaterial mBla;
+	private MaterialSprite mApa;
+
 	private int mTextureID;
 	boolean firstTime = true;
 
@@ -198,47 +205,57 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 		if (firstTime) {
 			Log.i("first", "time");
 			Bitmap b = toBitmap(0, 0, width, height, gl);
-			Log.i("first", "bitmap = " + b);
+			Log.i("first", "bitmap = " + b + ", b.width = " + b.getWidth() + ", " + b.getHeight());
 			mTextureID = createTextureFromBitmap(gl, b);
+
 			Log.i("first", "tID = " + mTextureID);
 			firstTime = false;
-			
-			
-			
 		}
-		
+
 		gl.glBindTexture(GL10.GL_TEXTURE_2D, mTextureID);
 
-		//gl.glPushMatrix();
-		//gl.glTranslatef(0, 0, 0);
-
-		((GL11Ext) gl).glDrawTexfOES(20, 20, 1, 64, 64);
-		// 8k / 5sec with draw call.
-		//mGrid.draw(gl);
-		
-		//gl.glPopMatrix();
+		((GL11Ext) gl).glDrawTexfOES(20, 20, 0, 128, 128);
 
 	}
-*/
-	protected Bitmap toBitmap(int x, int y, int w, int h, GL10 gl) {   
-         final int b[] = new int[w*h]; 
-         final int bt[] = new int[w*h]; 
-         final IntBuffer ib = IntBuffer.wrap(b);
 
-         gl.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib); 
-         for(int by=0; by<h; by++) { 
-              for(int bx=0; bx<w; bx++) { 
-                   //correction of R and B 
-                   int pix = b[by*w+bx]; 
-                   int pb = (pix>>16)&0xff; 
-                   int pr = (pix<<16)&0x00ff0000; 
-                   int pix1 = (pix&0xff00ff00) | pr | pb; 
-                   //correction of rows 
-                   bt[(h-by-1)*w+bx] = pix1; 
-              } 
-         }
-         return Bitmap.createBitmap(bt, w, h, Config.ALPHA_8); 
-    } 
+	protected Bitmap toBitmap(int x, int y, int w, int h, GL10 gl) {   
+
+        int tw = 128;
+        int th = 128;
+
+		//float d = (w > h) 
+		float dw = (float)w / (float)tw; // 0.133
+		float dh = (float)h / (float)th; // 0.2
+		Log.i("MWC.toBitmap", "scale 64x64 " + (dw) + "," + dh + "h: " + h);
+
+        final int b[] = new int[w*h]; 
+        final int bt[] = new int[tw*th]; 
+        final IntBuffer ib = IntBuffer.wrap(b);
+
+        gl.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib);
+        int ty = 0;
+        for(float by=0; by<h; by += dh) { 
+            int tx = 0;
+        	//Log.i("MWC", "ty = " + ty + " by = " + by + ", " + ((int)by*w));
+        	for(float bx=0; bx<w; bx += dw) { 
+	           //correction of R and B 
+        		int pix = b[(int)by*w+(int)bx]; 
+        		int pb = (pix>>16)&0xff; 
+        		int pr = (pix<<16)&0x00ff0000; 
+        		int pix1 = (pix&0xff00ff00) | pr | pb; 
+        		//correction of rows 
+        		//int pb = (int)(Math.random()*256);
+        		//Log.i("final", "start: " + 0xFF000000 + " end: " + (0xFF000000 | pb));
+            	//Log.i("MWC", "blue = "  + pb);
+        		bt[(th-ty-1)*tw+tx] = pix1;
+        		//bt[(ty*tw)+tx] = pix;//0xFF000000 | (pg<<8) | pb;
+        		tx++;
+        	}
+        	ty++;
+        }
+
+        return Bitmap.createBitmap(bt, tw, th, Bitmap.Config.RGB_565);
+	} 
 
     private static int createTextureFromBitmap(GL10 gl, Bitmap bitmap) {
         int textureId = -1;
@@ -259,6 +276,20 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 
             GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bitmap, 0);
 
+            
+            // Needed for OES drawing? 
+            final int[] mCropWorkspace = new int[4];
+
+            mCropWorkspace[0] = 0;
+            mCropWorkspace[1] = bitmap.getHeight();
+            mCropWorkspace[2] = bitmap.getWidth();
+            mCropWorkspace[3] = -bitmap.getHeight();
+            
+            bitmap.recycle();
+
+            ((GL11) gl).glTexParameteriv(GL10.GL_TEXTURE_2D, 
+                    GL11Ext.GL_TEXTURE_CROP_RECT_OES, mCropWorkspace, 0);
+
             int error = gl.glGetError();
             if (error != GL10.GL_NO_ERROR) {
                 Log.e("TextureManager", "Texture Load GLError: " + error);
@@ -268,5 +299,5 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 
         return textureId;
     }
-
+*/
 }

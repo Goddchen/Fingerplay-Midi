@@ -43,7 +43,7 @@ public class Pad extends MidiWidget implements IMidiController {
 		mDefault = new MaterialSprite(Materials.BUTTON_GREY, width, height);
 		addSprite(mDefault);
 
-		mClicked = new MaterialSprite(Materials.BUTTON_HIGHLIGHT, width, height);
+		mClicked = new MaterialSprite(Materials.BUTTON_GREY_HIGHLIGHT, width, height);
 		mClicked.visible = false;
 		addSprite(mClicked);
 

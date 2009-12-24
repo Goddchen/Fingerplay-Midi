@@ -15,6 +15,8 @@ import com.flat20.fingerplay.settings.SettingsModel;
 import com.flat20.fingerplay.settings.SettingsView;
 import com.flat20.gui.InteractiveActivity;
 import com.flat20.gui.NavigationOverlay;
+import com.flat20.gui.animations.AnimationManager;
+import com.flat20.gui.animations.Slide;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.flat20.gui.LayoutManager;
@@ -47,6 +49,12 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         Toast info = Toast.makeText(this, "Go to http://thesundancekid.net/ for help.", Toast.LENGTH_LONG);
         info.show();
+/*
+        // splash animations?
+        Slide navSlide = new Slide(mNavigationButtons, mNavigationButtons.x, mNavigationButtons.y);
+        mNavigationButtons.x = mWidth;
+        AnimationManager.getInstance().add(navSlide);
+*/
     }
 
 
@@ -61,7 +69,6 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 
 
-
         // We're drawing all controller screens in their own container so we can move them
         // separately from the navigation and the background.
         // MidiWidgetContainer calculates its height depending on the content added.
@@ -69,9 +76,10 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         // TODO Make LayoutManager part of GUI lib
         File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/" + mSettingsModel.layoutFile);
-        if (xmlFile != null && xmlFile.canRead())
-        	LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
-        else
+        Log.i("FPA", "mSettingsModel.layoutFile = " + mSettingsModel.layoutFile);
+        //if (xmlFile != null && xmlFile.canRead())
+        	//LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
+        //else
         	LayoutManager.loadXML(mMidiWidgetsContainer, getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth, mHeight);
 
         // Add all midi controllers to the manager
@@ -86,6 +94,7 @@ public class FingerPlayActivity extends InteractiveActivity {
         //mNavigationButtons.setScreenHeight( 320 );
         // Navigation goes on top.
         mRenderer.addSprite( mNavigationButtons );
+
 	}
 
 	@Override
@@ -120,7 +129,6 @@ public class FingerPlayActivity extends InteractiveActivity {
 	@Override
 	protected void onDestroy() {
     	ConnectionManager.getInstance().cleanup();
-    	Log.i("fpa", "onDestroy! System.exit");
 		super.onDestroy();
 
 		System.runFinalizersOnExit(true);
