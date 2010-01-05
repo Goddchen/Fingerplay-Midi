@@ -5,32 +5,28 @@ import com.flat20.gui.sprites.MaterialSprite;
 
 /**
  * Awful! Need a way to skin widgets so we don't get caught in
- * these nested inheritance messes.
+ * these inheritance messes.
  * 
  * @author andreas.reuterberg
  *
  */
 public abstract class DefaultMidiWidget extends MidiWidget {
 
-	final protected static int SHADOW_PADDING = 5;
-
-	final protected MaterialSprite mShadow;
+	// Background has a shadow outline which needs to be drawn outside the Widget.
+	final protected static int BACKGROUND_PADDING = 6;
 
 	// We need a skinning class
 	final protected MaterialSprite mBackground;
 	final protected MaterialSprite mOutline;
 	final protected MaterialSprite mOutlineSelected;
 	final protected MaterialSprite mTvScanlines;
-	
+
 	public DefaultMidiWidget(String name) {
 		super(name);
 
-		mShadow = new MaterialSprite(Materials.SHADOW);
-        mShadow.x = -SHADOW_PADDING;
-        mShadow.y = -SHADOW_PADDING;
-        addSprite( mShadow );
-
 		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
+		mBackground.x = -BACKGROUND_PADDING;
+		mBackground.y = -BACKGROUND_PADDING;
 
 		mOutline = new MaterialSprite(Materials.MC_OUTLINE);
 
@@ -45,9 +41,7 @@ public abstract class DefaultMidiWidget extends MidiWidget {
 	public void setSize(int w, int h) {
 		super.setSize(w, h);
 
-		mShadow.setSize(w + (SHADOW_PADDING*2), h + (SHADOW_PADDING*2));
-
-		mBackground.setSize(w-2, h-2);
+		mBackground.setSize(w + (BACKGROUND_PADDING*2), h + (BACKGROUND_PADDING*2));
 
 		mOutline.setSize(w, h);
 

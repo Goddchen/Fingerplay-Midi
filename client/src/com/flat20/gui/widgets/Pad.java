@@ -7,9 +7,9 @@ import com.flat20.gui.sprites.MaterialSprite;
 
 public class Pad extends MidiWidget implements IMidiController {
 
-	// Shadow would be a skin class.
-	final protected static int SHADOW_PADDING = 6;
-	final protected MaterialSprite mShadow;
+	// A dropshadow from DefaultMidiWidget.
+	final protected static int BACKGROUND_PADDING = 6;
+	final protected MaterialSprite mBackground;
 
 	final private MaterialSprite mDefault;
 	final private MaterialSprite mClicked;
@@ -34,11 +34,11 @@ public class Pad extends MidiWidget implements IMidiController {
 
 	public Pad(String name) {
 		super(name);
-		
-		mShadow = new MaterialSprite(Materials.SHADOW);
-        mShadow.x = -SHADOW_PADDING;
-        mShadow.y = -SHADOW_PADDING;
-        addSprite( mShadow );
+
+		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
+        mBackground.x = -BACKGROUND_PADDING;
+        mBackground.y = -BACKGROUND_PADDING;
+        addSprite( mBackground );
 
 		mDefault = new MaterialSprite(Materials.BUTTON_GREY, width, height);
 		addSprite(mDefault);
@@ -53,7 +53,7 @@ public class Pad extends MidiWidget implements IMidiController {
 	public void setSize(int w, int h) {
 		super.setSize(w, h);
 
-		mShadow.setSize(w + (SHADOW_PADDING*2), h + (SHADOW_PADDING*2));
+		mBackground.setSize(w + (BACKGROUND_PADDING*2), h + (BACKGROUND_PADDING*2));
 
 		mDefault.setSize(w, h);
 		mClicked.setSize(w, h);

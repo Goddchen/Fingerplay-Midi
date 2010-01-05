@@ -37,8 +37,8 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 	public Slider(String name) {
 		super(name);
 
-		mMeter = new MaterialSprite(Materials.MC_METER);
-		mMeterOff = new MaterialSprite(Materials.MC_METER_OFF);
+		mMeter = new MaterialSprite(Materials.MC_INDICATOR);
+		mMeterOff = new MaterialSprite(Materials.MC_INDICATOR_OFF);
 
 		addSprite(mBackground);
 		addSprite(mMeterOff);
@@ -47,8 +47,8 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 		addSprite(mOutlineSelected);
 		addSprite(mTvScanlines);
 		
-		mBackground.x = 1;
-		mBackground.y = 1;
+		//mBackground.x = 1;
+		//mBackground.y = 1;
 
 		mMeter.visible = false;
 

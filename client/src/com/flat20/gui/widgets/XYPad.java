@@ -48,8 +48,8 @@ public class XYPad extends DefaultMidiWidget implements IMidiController {
 		addSprite(mOutlineSelected);
 		addSprite(mTvScanlines);
 
-        mBackground.x = 1;
-		mBackground.y = 1;
+        //mBackground.x = 1;
+		//mBackground.y = 1;
 
 		mMeter.visible = false;
 
@@ -67,6 +67,7 @@ public class XYPad extends DefaultMidiWidget implements IMidiController {
 
 		//mMeter.setSize(w, h);
 		//mMeterOff.setSize(w, h);
+
 	}
 
 	@Override

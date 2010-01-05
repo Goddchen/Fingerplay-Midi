@@ -3,19 +3,19 @@
 
 	<layout screenWidth="480" screenHeight="320">
 
-		<screen x="0" y="0" width="480" height="320">
+		<screen x="0" y="0" width="480" height="318">
 			<xypad x="16" y="68" width="184" height="184" />
 			<xypad x="216" y="68" width="184" height="184" />
 		</screen>
 	
-		<screen x="0" y="320" width="480" height="320">
+		<screen x="0" y="322" width="480" height="318">
 			<slider x="20" y="16" width="72" height="288" />
 			<slider x="120" y="16" width="72" height="288" />
 			<slider x="224" y="16" width="72" height="288" />
 			<slider x="328" y="16" width="72" height="288" />
 		</screen>
 	
-		<screen x="0" y="640" width="480" height="320">
+		<screen x="0" y="642" width="480" height="318">
 			<pad x="64" y="16" width="60" height="60" />
 			<pad x="140" y="16" width="60" height="60" />
 			<pad x="216" y="16" width="60" height="60" />
@@ -38,23 +38,46 @@
 		</screen>
 	</layout>
 
+
 	<layout screenWidth="854" screenHeight="480">
 
-		<screen x="0" y="0" width="480" height="320">
-			<xypad x="216" y="68" width="184" height="184" />
+		<screen x="0" y="0" width="854" height="478">
+			<xypad x="32" y="56" width="350" height="378" />
+			<xypad x="412" y="56" width="350" height="378" />
 		</screen>
-	
-		<screen x="0" y="320" width="480" height="320">
-			<slider x="224" y="16" width="72" height="288" />
-			<slider x="328" y="16" width="72" height="288" />
+
+		<screen x="0" y="482" width="854" height="478">
+			<slider x="20" y="32" width="72" height="434" />
+			<slider x="118" y="32" width="72" height="434" />
+			<slider x="216" y="32" width="72" height="434" />
+			<slider x="314" y="32" width="72" height="434" />
+			<slider x="410" y="32" width="72" height="434" />
+			<slider x="508" y="32" width="72" height="434" />
+			<slider x="604" y="32" width="72" height="434" />
+			<slider x="700" y="32" width="72" height="434" />
 		</screen>
-	
-		<screen x="0" y="640" width="480" height="320">
-			<pad x="64" y="16" width="60" height="60" />
-			<pad x="140" y="16" width="60" height="60" />
-			<pad x="216" y="16" width="60" height="60" />
-			<pad x="292" y="16" width="60" height="60" />
+
+		<screen x="0" y="962" width="854" height="478">
+			<pad x="55" y="40" width="110" height="110" />
+			<pad x="195" y="40" width="110" height="110" />
+			<pad x="335" y="40" width="110" height="110" />
+			<pad x="475" y="40" width="110" height="110" />
+			<pad x="615" y="40" width="110" height="110" />
+
+			<pad x="55" y="180" width="110" height="110" />
+			<pad x="195" y="180" width="110" height="110" />
+			<pad x="335" y="180" width="110" height="110" />
+			<pad x="475" y="180" width="110" height="110" />
+			<pad x="615" y="180" width="110" height="110" />
+
+			<pad x="55" y="320" width="110" height="110" />
+			<pad x="195" y="320" width="110" height="110" />
+			<pad x="335" y="320" width="110" height="110" />
+			<pad x="475" y="320" width="110" height="110" />
+			<pad x="615" y="320" width="110" height="110" />
+
 		</screen>
+
 	</layout>
 
 </layouts>

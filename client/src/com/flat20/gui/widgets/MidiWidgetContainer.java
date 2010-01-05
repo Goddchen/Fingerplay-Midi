@@ -1,25 +1,13 @@
 package com.flat20.gui.widgets;
 
-import java.nio.IntBuffer;
-
-import javax.microedition.khronos.opengles.GL10;
-import javax.microedition.khronos.opengles.GL11;
-import javax.microedition.khronos.opengles.GL11Ext;
-
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.opengl.GLUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.flat20.gui.Renderer;
 import com.flat20.gui.animations.Animation;
 import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Slide;
-import com.flat20.gui.sprites.MaterialSprite;
 import com.flat20.gui.sprites.Sprite;
-import com.flat20.gui.textures.BitmapTexture;
-import com.flat20.gui.textures.TextureManager;
-import com.flat20.gui.textures.TiledMaterial;
 import com.flat20.gui.widgets.IScrollListener;
 import com.flat20.gui.widgets.Scrollbar.IScrollable;
 
@@ -111,6 +99,7 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 
 	public void setY(int newY) {
 		y = Math.max(-(this.height-mScreenHeight), Math.min(0, newY));
+		//Log.i("MWC", "setY = " + y + " height = " + this.height + ", " + Renderer.VIEWPORT_HEIGHT);
 		if (mScrollListener != null)
 			mScrollListener.onScrollChanged(y);
 	}
