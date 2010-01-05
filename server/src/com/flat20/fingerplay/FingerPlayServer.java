@@ -11,7 +11,7 @@ import com.flat20.fingerplay.socket.commands.SocketCommand;
 
 public class FingerPlayServer implements Runnable{
 
-	public static final String VERSION = "0.7.0";
+	public static final String VERSION = "0.8.0";
 	public static final int SERVERPORT = 4444;
 
 	public static final String MULTICAST_SERVERIP = "230.0.0.1";
@@ -47,12 +47,12 @@ public class FingerPlayServer implements Runnable{
 			//midi.open("SB Audigy Synth B [CCC0]");
 			//midi.open("LoopBe Internal MIDI", true); // true = bForOutput
 			//midi.playnote(1000);
-			
+
 			//Midi midiOut = new Midi();
 			//midiOut.open("LoopBe Internal MIDI", false);
 
+			//midi.listDevices(true, false, false);
 
-			
 			// If update function didn't get the local IP we'll try
 			// a cheaper alternative here. Might give us 127.0.0.1 though.
 
@@ -61,7 +61,6 @@ public class FingerPlayServer implements Runnable{
 				mLocalIP = localAddress.getHostAddress();
 			}
 
-			
 			// Start multicast server
 
 			String multicastOutputMessage = mLocalIP + ":" + mPort;

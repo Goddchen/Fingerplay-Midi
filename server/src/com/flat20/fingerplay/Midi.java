@@ -19,7 +19,7 @@ public class Midi {
 		//open(deviceName);
 	}
 
-	public void open(String deviceName, boolean bForOutput) {
+	public MidiDevice open(String deviceName, boolean bForOutput) {
 		MidiDevice.Info	info = getMidiDeviceInfo(deviceName, bForOutput);
 		if (info != null) {
 			// Found device, try to open it.
@@ -27,14 +27,18 @@ public class Midi {
 				outputDevice = MidiSystem.getMidiDevice(info);
 				System.out.println(info.getName() + " selected.");
 				outputDevice.open();
-				receiver = outputDevice.getReceiver();
+				if (bForOutput)
+					receiver = outputDevice.getReceiver();
 				//Transmitter t = outputDevice.getTransmitter();
 				//t.
+				return outputDevice;
 			} catch (MidiUnavailableException e) {
 				System.out.println(e);
-				return;
+				return null;
 			}
-		}/*
+		}
+		return null;
+		/*
 		else {
 			// Didn't find the device so let's try default.
 			System.out.println(deviceName + " not found. Using default device.");
@@ -222,7 +226,7 @@ public class Midi {
 					}
 					else
 					{
-						System.out.println("" + i + "  " + aInfos[i].getName());
+						System.out.println("" + i + " = " + aInfos[i].getName());
 					}
 				}
 			}
