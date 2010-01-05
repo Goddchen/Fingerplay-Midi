@@ -48,21 +48,17 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         Toast info = Toast.makeText(this, "Go to http://thesundancekid.net/ for help.", Toast.LENGTH_LONG);
         info.show();
-/*
-        // splash animations?
-        Slide navSlide = new Slide(mNavigationButtons, mNavigationButtons.x, mNavigationButtons.y);
-        mNavigationButtons.x = mWidth;
-        AnimationManager.getInstance().add(navSlide);
-*/
 
-        Splash navSplash = new Splash(mNavigationButtons, 64, 300, mWidth, mNavigationButtons.x);
+
+        // Simple splash animation
+ 
+        Splash navSplash = new Splash(mNavigationButtons, 64, 190, mWidth, mNavigationButtons.x);
         mNavigationButtons.x = mWidth;
         AnimationManager.getInstance().add(navSplash);
 
-        Splash mwcSplash = new Splash(mMidiWidgetsContainer, 64, 310, -mWidth, mMidiWidgetsContainer.x);
+        Splash mwcSplash = new Splash(mMidiWidgetsContainer, 64, 200, -mWidth, mMidiWidgetsContainer.x);
         mMidiWidgetsContainer.x = -mWidth;
         AnimationManager.getInstance().add(mwcSplash);
-        
     }
 
     
