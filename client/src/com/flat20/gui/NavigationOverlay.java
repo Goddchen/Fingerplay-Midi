@@ -29,12 +29,12 @@ public class NavigationOverlay extends WidgetContainer {
         // Maximum button size is 48 for now.
         int buttonHeight = Math.min( (height-8-8)/3, 48);
 
-        mButtonReleaseAll = new FPButton(R.drawable.icon_controller_held, width-16, buttonHeight);
+        mButtonReleaseAll = new FPButton(Materials.BUTTON_ICON_RELEASE_ALL, width-16, buttonHeight);
         mButtonReleaseAll.x = 8;
         mButtonReleaseAll.y = height-8-buttonHeight-8-buttonHeight;
         mButtonReleaseAll.setListener(mButtonReleaseAllListener);
 
-        mButtonSettings = new FPButton(R.drawable.icon_settings, width-16, buttonHeight);
+        mButtonSettings = new FPButton(Materials.BUTTON_ICON_SETTINGS, width-16, buttonHeight);
         mButtonSettings.x = 8;
         mButtonSettings.y = height-8-buttonHeight;
         mButtonSettings.setListener(mButtonSettingsListener);

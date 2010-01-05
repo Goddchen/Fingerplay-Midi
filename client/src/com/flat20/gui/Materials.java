@@ -21,12 +21,14 @@ public class Materials {
 	final public static NineSliceMaterial NAVIGATION_SCROLLER_THUMB_HIGHLIGHT = new NineSliceMaterial(NAVIGATION_BAR_TEXTURE, 0, 4, 28, 32,  48, 54, 58, 64);
 
 	// FPButton
-	final private static ResourceTexture BUTTON_TEXTURE = TextureManager.createResourceTexture(R.drawable.buttons_ps, 32, 64);
+	final private static ResourceTexture BUTTON_TEXTURE = TextureManager.createResourceTexture(R.drawable.buttons_ps, 64, 64);
 	final public static NineSliceMaterial BUTTON = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  0, 6, 10, 16);
 	final public static NineSliceMaterial BUTTON_HIGHLIGHT = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  16, 22, 26, 32);
 	final public static NineSliceMaterial BUTTON_GREY = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  32, 36, 44, 48);
 	final public static NineSliceMaterial BUTTON_GREY_HIGHLIGHT = new NineSliceMaterial(BUTTON_TEXTURE, 0, 4, 28, 32,  48, 52, 60, 64);
 
+	final public static StretchedMaterial BUTTON_ICON_SETTINGS = new StretchedMaterial(BUTTON_TEXTURE, 32, 0, 64, 32);
+	final public static StretchedMaterial BUTTON_ICON_RELEASE_ALL = new StretchedMaterial(BUTTON_TEXTURE, 32, 32, 64, 64);
 
 	// MidiWidgets
 
