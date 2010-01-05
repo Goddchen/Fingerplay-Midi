@@ -1,6 +1,7 @@
 package com.flat20.gui;
 
 import java.io.File;
+
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -10,8 +11,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import android.util.Log;
 
 import com.flat20.gui.widgets.Pad;
 import com.flat20.gui.widgets.Slider;
@@ -64,28 +63,22 @@ public class LayoutManager {
 			// Figure out if it's new format or not.
 			Element layout = doc.getDocumentElement();
 
-			Log.i("LM", "name = " + layout.getNodeName());
-
 			if (layout.getNodeName().equals("layouts")) {
 				NodeList layouts = doc.getElementsByTagName("layout");
 				int bestDiff = 10000;
- 
+
 				for (int l = 0; l < layouts.getLength(); l++) {
-					Log.i("LM", "layout = " + layouts.item(l));
 					if (layouts.item(l).getNodeType() == Node.ELEMENT_NODE) {
 						Element tempLayout = (Element) layouts.item(l);
 						int layoutWidth = getIntegerAttribute(tempLayout, "screenWidth");
-						Log.i("LM", "layoutWidth = " + layoutWidth + ",  bestDiff = " + bestDiff );
 						int diff = Math.abs(width - layoutWidth);
 						if (diff < bestDiff) {
 							bestDiff = diff;
 							layout = tempLayout;
-							Log.i("LM", "layout selected = " + layout );
 						}
 					}
 				}
 			} else {
-				Log.i("LM", "classic");
 			}
 
 			parseLayout(mainContainer, layout, width, height);

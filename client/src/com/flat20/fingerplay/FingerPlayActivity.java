@@ -5,7 +5,6 @@ import java.io.File;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.Toast;
 
@@ -16,7 +15,7 @@ import com.flat20.fingerplay.settings.SettingsView;
 import com.flat20.gui.InteractiveActivity;
 import com.flat20.gui.NavigationOverlay;
 import com.flat20.gui.animations.AnimationManager;
-import com.flat20.gui.animations.Slide;
+import com.flat20.gui.animations.Splash;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.flat20.gui.LayoutManager;
@@ -28,7 +27,7 @@ public class FingerPlayActivity extends InteractiveActivity {
     private MidiControllerManager mMidiControllerManager;
 
     private MidiWidgetContainer mMidiWidgetsContainer;
-    
+
     private Logo mLogo;
 
     private NavigationOverlay mNavigationButtons; 
@@ -55,8 +54,18 @@ public class FingerPlayActivity extends InteractiveActivity {
         mNavigationButtons.x = mWidth;
         AnimationManager.getInstance().add(navSlide);
 */
+
+        Splash navSplash = new Splash(mNavigationButtons, 64, 300, mWidth, mNavigationButtons.x);
+        mNavigationButtons.x = mWidth;
+        AnimationManager.getInstance().add(navSplash);
+
+        Splash mwcSplash = new Splash(mMidiWidgetsContainer, 64, 310, -mWidth, mMidiWidgetsContainer.x);
+        mMidiWidgetsContainer.x = -mWidth;
+        AnimationManager.getInstance().add(mwcSplash);
+        
     }
 
+    
 
 
 	@Override
@@ -76,10 +85,10 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         // TODO Make LayoutManager part of GUI lib
         File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/" + mSettingsModel.layoutFile);
-        Log.i("FPA", "mSettingsModel.layoutFile = " + mSettingsModel.layoutFile);
-        //if (xmlFile != null && xmlFile.canRead())
-        	//LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
-        //else
+        //Log.i("FPA", "mSettingsModel.layoutFile = " + mSettingsModel.layoutFile);
+        if (xmlFile != null && xmlFile.canRead())
+        	LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
+        else
         	LayoutManager.loadXML(mMidiWidgetsContainer, getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth, mHeight);
 
         // Add all midi controllers to the manager

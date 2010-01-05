@@ -48,7 +48,7 @@ public class FingerServerConnection extends Connection implements IReceiver {
 	private DataInputStream in = null;
 	private FingerWriter mWriter;
 	private FingerReader mReader;
-	private ReadThread readThread;
+	private ReadThread mReadThread;
 
 	String server = null;
 	int port = DEFAULT_PORT;
@@ -125,8 +125,8 @@ public class FingerServerConnection extends Connection implements IReceiver {
 				mWriter = new FingerWriter(out);
 				mReader = new FingerReader(in, this);
 
-				readThread = new ReadThread();
-				readThread.start();
+				mReadThread = new ReadThread();
+				mReadThread.start();
 
 			} catch(Exception e) {
 				socket = null;
@@ -148,7 +148,7 @@ public class FingerServerConnection extends Connection implements IReceiver {
 
 	// Socket is disconnected when we can't read anything from it.
 	public boolean isConnected() {
-		return (readThread != null && readThread.isRunning());
+		return (mReadThread != null && mReadThread.isRunning());
 	}
 /*
 	@Override
@@ -183,7 +183,7 @@ public class FingerServerConnection extends Connection implements IReceiver {
 
 		try {
 			if (isConnected()) {
-				readThread.setRunning(false);
+				mReadThread.setRunning(false);
 				socket.close();
 			}
 		} catch (IOException e) {
@@ -212,25 +212,72 @@ public class FingerServerConnection extends Connection implements IReceiver {
     };
 
     // So reading is done in the background.
-    class ReadThread extends Thread {
+    private class ReadThread extends Thread {
 
-    	boolean running;
+    	private boolean mRunning;
 
     	public ReadThread() {
-    		running = true;
+    		mRunning = true;
     	}
  
     	public boolean isRunning() {
-    		return running;
+    		return mRunning;
     	}
     	public void setRunning(boolean r) {
-    		running = r;
+    		mRunning = r;
     	}
 
 
     	public void run() {
 
-			while (running) {
+			while (mRunning) {
+				try {
+					if (in.available() > 0) {
+						mReader.readCommand();
+					}
+					Thread.sleep(20);
+				} catch (SocketTimeoutException e) {
+					// normal behaviour from socket reads.
+					Log.i("FSC", "SocketTimeoutException " + e);
+				} catch (Exception e) {
+					Log.i("FSC", "read exception " + e);
+					disconnect();
+					try {
+						socket.close();
+					} catch (Exception e2) {
+						System.out.println("socket.close() failed! " + e2);
+					}
+
+					// TODO Run this in disconnect() ??
+    				if (listener != null)
+    					listener.onDisconnect();
+				}
+
+			}
+
+    	}
+    }
+/*
+	// Implement UDP instead
+    private class WriteThread extends Thread {
+
+    	private boolean mRunning;
+
+    	public WriteThread() {
+    		mRunning = true;
+    	}
+ 
+    	public boolean isRunning() {
+    		return mRunning;
+    	}
+    	public void setRunning(boolean r) {
+    		mRunning = r;
+    	}
+
+
+    	public void run() {
+
+			while (mRunning) {
 				try {
 					if (in.available() > 0) {
 						mReader.readCommand();
@@ -258,8 +305,9 @@ public class FingerServerConnection extends Connection implements IReceiver {
 
     	}
     }
+*/
 
-	@Override
+    @Override
 	public void onDeviceList(DeviceList socketCommand) throws Exception {
 		if (listener != null)
 			listener.onSocketCommand(socketCommand);
