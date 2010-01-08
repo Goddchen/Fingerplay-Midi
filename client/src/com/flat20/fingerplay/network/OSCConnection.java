@@ -67,47 +67,11 @@ public class OSCConnection extends Connection {
 		}
 	}
 
-	/*
-	Object args[] = new Object[4];
-	args[0] = new Integer(data[1]); //command
-	args[1] = new Integer(data[2]); //channel
-	args[2] = new Integer(data[3]); //data1
-	args[3] = new Integer(data[4]); //data2
-	OSCMessage msg = new OSCMessage("/fingerplay", args);
-	*/
-/*
-	@Override
-	protected void write(byte[] data) {
-		if (data[0] == SocketCommand.COMMAND_MIDI_SHORT_MESSAGE) {
-			Object args[] = new Object[1];
-			args[0] = new Integer(data[4]);
-			OSCMessage msg = new OSCMessage("/fingerplay/control/" + data[3], args);
-	    	try {
-	    		sender.send((OSCPacket)msg);
-	    	} catch (Exception e) {
-	    		Log.i("osc", "Couldn't send");
-	    	}
-		} else {
-			//Log.i("OSCConnection", "Can't send this to osc?");
-		}
-	}
-*/
 	public void disconnect() {
 		if (sender != null) {
 			sender.close();
 			sender = null;
 		}
-		//c.dispose();
 	}
-/*
-    private OnUpdateListener listener;
-    public void setOnUpdateListener(OnUpdateListener l) {
-        listener = l;
-    }
 
-    public interface OnUpdateListener {
-        void onConnectionLost();
-        void onRead(byte[] data, int length);
-    }
-*/
 }

@@ -7,6 +7,13 @@ import android.preference.PreferenceManager;
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
 import com.flat20.fingerplay.network.ConnectionManager;
 
+/**
+ * SettingsModel is a singleton because it's used by both Settings
+ * and FingerPlayActivity. Could do with a more suitable name.
+ * 
+ * @author andreas
+ *
+ */
 public class SettingsModel {
 
 	public static final int STATE_CONNECTED = 1;
@@ -36,7 +43,6 @@ public class SettingsModel {
 	}
 
 	private SettingsModel() {
-		//state = initialState;
 	}
 
 	public void init(Context context) {
@@ -92,9 +98,6 @@ public class SettingsModel {
 	}
 
 	public void setLayoutFile(String value) {
-		if (!value.equals(layoutFile)) {
-			// TODO Show Toast about restarting app for changes to take effect.
-		}
 		layoutFile = value;
 		updateView();
 	}

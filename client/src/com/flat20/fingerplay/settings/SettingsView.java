@@ -11,7 +11,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceScreen;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.flat20.fingerplay.R;
@@ -266,7 +265,6 @@ public class SettingsView extends PreferenceActivity implements Preference.OnPre
 
     @Override
     public boolean onPreferenceTreeClick (PreferenceScreen preferenceScreen, Preference preference) {
-    	Log.i("Settings", "onPreferenceTreeClick");
 
     	if (preference == null || preference.getKey() == null)
     		return true;

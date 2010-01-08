@@ -2,6 +2,12 @@ package com.flat20.gui.animations;
 
 import com.flat20.gui.sprites.Sprite;
 
+/**
+ * A sliding animation which is run at startup.
+ * 
+ * @author andreas
+ *
+ */
 public class Splash extends Animation {
 
 	protected Sprite mSprite;

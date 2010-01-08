@@ -11,6 +11,7 @@ import com.flat20.fingerplay.network.ConnectionManager;
 import com.flat20.fingerplay.socket.commands.midi.MidiControlChange;
 import com.flat20.fingerplay.socket.commands.midi.MidiNoteOff;
 import com.flat20.fingerplay.socket.commands.midi.MidiNoteOn;
+import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 import com.flat20.gui.widgets.MidiWidget;
 import com.flat20.gui.widgets.Widget;
@@ -125,6 +126,8 @@ public class MidiControllerManager {
 
     };
 
+    // Handler receiving MIDI commands from the server.
+    // TODO Implement 
     private ConnectionManager.IConnectionListener mConnectionListener = new ConnectionManager.IConnectionListener() {
 
     	public void onConnect() {
@@ -138,7 +141,9 @@ public class MidiControllerManager {
 
     	public void onSocketCommand(SocketCommand sm) {
 			if (sm.command == SocketCommand.COMMAND_MIDI_SHORT_MESSAGE) {
-				Log.i("mcm", "server sent");
+				Log.i("mcm", "server sent cc message");
+				MidiSocketCommand msc = (MidiSocketCommand) sm;
+				Log.i("mcm", " msc = " + msc);
 			}
     	}
     };

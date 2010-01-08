@@ -87,6 +87,9 @@ public class SettingsController {
 
     };
 
+
+    // Controller commands
+
     protected void setConnectionType(int connectionType) {
         mConnectionManager.setConnection(connectionType);
 		mModel.setServerType( connectionType );
@@ -107,7 +110,7 @@ public class SettingsController {
 		mModel.setMidiDevice(deviceName);
 	}
 
-    public void serverConnect() {
+    protected void serverConnect() {
 		if ( mModel.serverType != -1 && !mConnectionManager.isConnected() ) {
 			mConnectionManager.connect( mModel.serverAddress );
 			mModel.setState(SettingsModel.STATE_CONNECTING);
@@ -119,7 +122,7 @@ public class SettingsController {
 		}
     }
 
-    public void sendControlChange(String controllerName, int index) {
+    protected void sendControlChange(String controllerName, int index) {
 		IMidiController mc = mModel.midiControllerManager.getMidiControllerByName(controllerName);
 		if (mc != null) {
 			int ccIndex = (int) mModel.midiControllerManager.getIndex(mc);
@@ -129,7 +132,15 @@ public class SettingsController {
 
     }
 
-    // Layout
+	protected void setLayoutFile(String value) {
+		if (!value.equals(mModel.layoutFile)) {
+			mView.displayError("Restart FingerPlay MIDI to use the new layout file.");
+		}
+		mModel.setLayoutFile(value);
+	}
+
+
+	// Layout files listing
 
     protected void updateLayoutsList() {
         File home = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/");

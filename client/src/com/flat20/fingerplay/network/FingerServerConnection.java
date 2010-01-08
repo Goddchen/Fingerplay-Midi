@@ -4,10 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ConnectException;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.MulticastSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 
@@ -38,8 +35,8 @@ public class FingerServerConnection extends Connection implements IReceiver {
 	private final static int READ_TIMEOUT = 1000;
 	private final static int CONNECT_TIMEOUT = 10000;
 
-	private static final String MULTICAST_SERVERIP = "230.0.0.1";
-	private static final int MULTICAST_SERVERPORT = 9013;
+	//private static final String MULTICAST_SERVERIP = "230.0.0.1";
+	//private static final int MULTICAST_SERVERPORT = 9013;
 
 	private static final int DEFAULT_PORT = 4444;
 
@@ -66,6 +63,7 @@ public class FingerServerConnection extends Connection implements IReceiver {
 	}
 
 	// Not in use, but should be.
+/*
     private String getServerAddressMulticast() {
     	try {
 
@@ -91,7 +89,7 @@ public class FingerServerConnection extends Connection implements IReceiver {
     		return null;
     	}
     }
-
+*/
     /**
      * In the form of hostname:port or just hostname but default port of 4444 will be used.
      * @param serverAddress
@@ -257,55 +255,6 @@ public class FingerServerConnection extends Connection implements IReceiver {
 
     	}
     }
-/*
-	// Implement UDP instead
-    private class WriteThread extends Thread {
-
-    	private boolean mRunning;
-
-    	public WriteThread() {
-    		mRunning = true;
-    	}
- 
-    	public boolean isRunning() {
-    		return mRunning;
-    	}
-    	public void setRunning(boolean r) {
-    		mRunning = r;
-    	}
-
-
-    	public void run() {
-
-			while (mRunning) {
-				try {
-					if (in.available() > 0) {
-						mReader.readCommand();
-					}
-					Thread.sleep(20);
-				} catch (SocketTimeoutException e) {
-					// normal behaviour from socket reads.
-					Log.i("FSC", "SocketTimeoutException " + e);
-				} catch (Exception e) {
-					Log.i("FSC", "read exception " + e);
-					disconnect();
-					Log.i("FSC", "onDiksconnect should be called");
-					try {
-						socket.close();
-					} catch (Exception e2) {
-						System.out.println("desperate close!" + e2);
-					}
-
-					// TODO Run this in disconnect() ??
-    				if (listener != null)
-    					listener.onDisconnect();
-				}
-
-			}
-
-    	}
-    }
-*/
 
     @Override
 	public void onDeviceList(DeviceList socketCommand) throws Exception {

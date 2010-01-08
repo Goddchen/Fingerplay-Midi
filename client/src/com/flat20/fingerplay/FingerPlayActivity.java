@@ -30,7 +30,7 @@ public class FingerPlayActivity extends InteractiveActivity {
 
     private Logo mLogo;
 
-    private NavigationOverlay mNavigationButtons; 
+    private NavigationOverlay mNavigationOverlay; 
  
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,9 +51,9 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 
         // Simple splash animation
- 
-        Splash navSplash = new Splash(mNavigationButtons, 64, 190, mWidth, mNavigationButtons.x);
-        mNavigationButtons.x = mWidth;
+
+        Splash navSplash = new Splash(mNavigationOverlay, 64, 190, mWidth, mNavigationOverlay.x);
+        mNavigationOverlay.x = mWidth;
         AnimationManager.getInstance().add(navSplash);
 
         Splash mwcSplash = new Splash(mMidiWidgetsContainer, 64, 200, -mWidth, mMidiWidgetsContainer.x);
@@ -61,7 +61,18 @@ public class FingerPlayActivity extends InteractiveActivity {
         AnimationManager.getInstance().add(mwcSplash);
     }
 
-    
+    /**
+     * Test of the new TestRenderer which groups Textures together
+     * so OpenGL only needs to render one texture at a time.
+     */
+    /*
+	@Override
+    protected void onCreateView() {
+		mWidgetRenderer = new TestRenderer(mWidth, mHeight);
+		mRenderer = mWidgetRenderer;
+        mView = new GLSurfaceView(this);
+        mView.setRenderer(mRenderer);
+    }*/
 
 
 	@Override
@@ -78,6 +89,7 @@ public class FingerPlayActivity extends InteractiveActivity {
         // separately from the navigation and the background.
         // MidiWidgetContainer calculates its height depending on the content added.
         mMidiWidgetsContainer = new MidiWidgetContainer(mWidth, mHeight);
+        mMidiWidgetsContainer.z = 1.0f;
 
         // TODO Make LayoutManager part of GUI lib
         File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/" + mSettingsModel.layoutFile);
@@ -86,19 +98,20 @@ public class FingerPlayActivity extends InteractiveActivity {
         	LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
         else
         	LayoutManager.loadXML(mMidiWidgetsContainer, getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth, mHeight);
-
+ 
         // Add all midi controllers to the manager
         mMidiControllerManager.addMidiControllersIn(mMidiWidgetsContainer);
 
         mRenderer.addSprite( mMidiWidgetsContainer );
 
 		// Navigation
-        mNavigationButtons = new NavigationOverlay(64, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mHeight);
-        mNavigationButtons.x = mWidth - mNavigationButtons.width+2;
-        mNavigationButtons.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
+        mNavigationOverlay = new NavigationOverlay(64, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mHeight);
+        mNavigationOverlay.x = mWidth - mNavigationOverlay.width+2;
+        mNavigationOverlay.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
+        mNavigationOverlay.z = 2.0f;
         //mNavigationButtons.setScreenHeight( 320 );
         // Navigation goes on top.
-        mRenderer.addSprite( mNavigationButtons );
+        mRenderer.addSprite( mNavigationOverlay );
 
 	}
 
