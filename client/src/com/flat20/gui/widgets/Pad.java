@@ -104,7 +104,7 @@ public class Pad extends MidiWidget implements IMidiController {
 	
 	@Override
 	protected void release(float pressure) {
-		sendNoteOff(CC_TOUCH, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
+		sendNoteOff(CC_TOUCH, 0x00);
 		mClicked.visible = false;
 	}
 
