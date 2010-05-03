@@ -60,7 +60,7 @@ public class Pad extends MidiWidget implements IMidiController {
 	}
 
 	@Override
-	public boolean onTouchDown(int touchX, int touchY, float pressure) {
+	public boolean onTouchDown(int touchX, int touchY, float pressure, int pointerId) {
 		press(pressure);
 		//sendNoteOn(0, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
 		//mMeter.visible = true;
@@ -70,7 +70,7 @@ public class Pad extends MidiWidget implements IMidiController {
 
 
 	@Override
-	public boolean onTouchUp(int touchX, int touchY, float pressure) {
+	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
 		release(pressure);
 		//sendNoteOff(CC_TOUCH, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
 		//mMeter.visible = false;
@@ -78,7 +78,7 @@ public class Pad extends MidiWidget implements IMidiController {
 	}
 
 	@Override
-	public boolean onTouchUpOutside(int touchX, int touchY, float pressure) {
+	public boolean onTouchUpOutside(int touchX, int touchY, float pressure, int pointerId) {
 		release(pressure);
 		return true;
 	}

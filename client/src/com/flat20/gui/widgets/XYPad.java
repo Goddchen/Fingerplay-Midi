@@ -71,13 +71,13 @@ public class XYPad extends DefaultMidiWidget implements IMidiController {
 	}
 
 	@Override
-	public boolean onTouchDown(int touchX, int touchY, float pressure) {
+	public boolean onTouchDown(int touchX, int touchY, float pressure, int pointerId) {
 		press(pressure);
 		return true;
 	}
 
 	@Override
-	public boolean onTouchMove(int touchX, int touchY, float pressure) {
+	public boolean onTouchMove(int touchX, int touchY, float pressure, int pointerId) {
 		int valueX = (int) Math.max(0, Math.min(0x7F, ((float) touchX / width) * 0x7F) );
 		int valueY = (int) Math.max(0, Math.min(0x7F, ((float) touchY / height) * 0x7F) );
 		if (valueX != lastValueX) {
@@ -96,14 +96,14 @@ public class XYPad extends DefaultMidiWidget implements IMidiController {
 	}
 
 	@Override
-	public boolean onTouchUp(int touchX, int touchY, float pressure) {
+	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
 		if (!isHolding())
 			release(pressure);
 		return true;
 	}
 
 	@Override
-	public boolean onTouchUpOutside(int touchX, int touchY, float pressure) {
+	public boolean onTouchUpOutside(int touchX, int touchY, float pressure, int pointerId) {
 		if (!isHolding())
 			release(pressure);
 		return true;

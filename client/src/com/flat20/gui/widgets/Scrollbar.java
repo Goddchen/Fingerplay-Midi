@@ -64,26 +64,26 @@ public class Scrollbar extends Widget implements IScrollListener {
 	}
 
 	@Override
-	public boolean onTouchDown(int touchX, int touchY, float pressure) {
+	public boolean onTouchDown(int touchX, int touchY, float pressure, int pointerId) {
 		mThumbHighlight.visible = true;
 		return true;
 	}
 
 	@Override
-	public boolean onTouchMove(int touchX, int touchY, float pressure) {
+	public boolean onTouchMove(int touchX, int touchY, float pressure, int pointerId) {
 		scroll(touchY);
 		return true;
 	}
 
 	@Override
-	public boolean onTouchUp(int touchX, int touchY, float pressure) {
+	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
 		mThumbHighlight.visible = false;
 		snap(touchY);
 		return true;
 	}
 
 	@Override
-	public boolean onTouchUpOutside(int touchX, int touchY, float pressure) {
+	public boolean onTouchUpOutside(int touchX, int touchY, float pressure, int pointerId) {
 		mThumbHighlight.visible = false;
 		snap(touchY);
 		return true;

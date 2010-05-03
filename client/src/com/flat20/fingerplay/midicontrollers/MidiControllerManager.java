@@ -13,6 +13,7 @@ import com.flat20.fingerplay.socket.commands.midi.MidiNoteOff;
 import com.flat20.fingerplay.socket.commands.midi.MidiNoteOn;
 import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
+import com.flat20.gui.widgets.IWidget;
 import com.flat20.gui.widgets.MidiWidget;
 import com.flat20.gui.widgets.Widget;
 import com.flat20.gui.widgets.WidgetContainer;
@@ -64,9 +65,9 @@ public class MidiControllerManager {
 
 	// Add all midi controllers inside widgetContainer
 	public void addMidiControllersIn(WidgetContainer widgetContainer) {
-		Widget[] widgets = widgetContainer.getWidgets();
+		IWidget[] widgets = widgetContainer.getWidgets();
         for (int i=0; i<widgets.length; i++) {
-        	Widget w = widgets[i];
+        	IWidget w = widgets[i];
         	if (w instanceof MidiWidget) {
 				MidiWidget midiWidget = (MidiWidget) w;
 				midiWidget.setOnControlChangeListener( onControlChangeListener );

@@ -71,13 +71,13 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 	
 	
 	@Override
-	public boolean onTouchDown(int touchX, int touchY, float pressure) {
+	public boolean onTouchDown(int touchX, int touchY, float pressure, int pointerId) {
 		press(1.0f);
 		return true;
 	}
 
 	@Override
-	public boolean onTouchMove(int touchX, int touchY, float pressure) {
+	public boolean onTouchMove(int touchX, int touchY, float pressure, int pointerId) {
 		float dy = ((float)touchY / (float)height);
 		int value = (int) Math.max(0, Math.min(dy * 0x7F, 0x7F));
 		if (value != lastValue) {
@@ -89,14 +89,14 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 	}
 
 	@Override
-	public boolean onTouchUp(int touchX, int touchY, float pressure) {
+	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
 		if (!isHolding())
 			release(1.0f);
 		return true;
 	}
 
 	@Override
-	public boolean onTouchUpOutside(int touchX, int touchY, float pressure) {
+	public boolean onTouchUpOutside(int touchX, int touchY, float pressure, int pointerId) {
 		if (!isHolding())
 			release(1.0f);
 		return true;

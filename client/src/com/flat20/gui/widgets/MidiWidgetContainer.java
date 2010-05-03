@@ -1,7 +1,5 @@
 package com.flat20.gui.widgets;
 
-import android.view.KeyEvent;
-
 import com.flat20.gui.animations.Animation;
 import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Slide;
@@ -56,7 +54,7 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 	public void setUpdateListener(IScrollListener listener) {
 		mScrollListener = listener;
 	}
-
+/*
 	// TOOD Move to GUI
 	public void onKeyDown(int keyCode, KeyEvent event) {
 		if (mFocusedWidget != null) {
@@ -68,7 +66,7 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 		}
 		//return super.onKeyDown(keyCode, event);
 	}
-
+*/
 	/*
 	 * Adds the Sprite to the list and expands width and height.
 	 */
@@ -93,19 +91,19 @@ public class MidiWidgetContainer extends WidgetContainer implements IScrollable 
 	}
 
 	@Override
-	public boolean onTouchDown(int touchX, int touchY, float pressure) {
-		super.onTouchDown(touchX, touchY, pressure);
+	public boolean onTouchDown(int touchX, int touchY, float pressure, int pointerId) {
+		super.onTouchDown(touchX, touchY, pressure, pointerId);
 		return true;
 	}
 
 	@Override 
-	public boolean onTouchMove(int touchX, int touchY, float pressure) {
-		return super.onTouchMove(touchX, touchY, pressure);
+	public boolean onTouchMove(int touchX, int touchY, float pressure, int pointerId) {
+		return super.onTouchMove(touchX, touchY, pressure, pointerId);
 	}
 
 	@Override
-	public boolean onTouchUp(int touchX, int touchY, float pressure) {
-		return super.onTouchUp(touchX, touchY, pressure);
+	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
+		return super.onTouchUp(touchX, touchY, pressure, pointerId);
 	}
 
 	class DragAnimation extends Animation {
