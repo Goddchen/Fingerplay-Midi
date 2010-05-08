@@ -5,8 +5,6 @@ import java.io.File;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
@@ -14,15 +12,11 @@ import com.flat20.fingerplay.network.ConnectionManager;
 import com.flat20.fingerplay.settings.SettingsModel;
 import com.flat20.fingerplay.settings.SettingsView;
 import com.flat20.gui.InteractiveActivity;
-import com.flat20.gui.Materials;
 import com.flat20.gui.NavigationOverlay;
 import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Splash;
 import com.flat20.gui.sprites.Logo;
-import com.flat20.gui.sprites.MaterialSprite;
-import com.flat20.gui.widgets.FPButton;
 import com.flat20.gui.widgets.MidiWidgetContainer;
-import com.flat20.gui.widgets.WidgetContainer;
 import com.flat20.gui.LayoutManager;
 
 public class FingerPlayActivity extends InteractiveActivity {
@@ -54,17 +48,15 @@ public class FingerPlayActivity extends InteractiveActivity {
         Toast info = Toast.makeText(this, "Go to http://thesundancekid.net/ for help.", Toast.LENGTH_LONG);
         info.show();
 
-/*
         // Simple splash animation
 
-        Splash navSplash = new Splash(mNavigationOverlay, 64, 190, mWidth, mNavigationOverlay.x);
+        Splash navSplash = new Splash(mNavigationOverlay, 64, 30, mWidth, mNavigationOverlay.x);
         mNavigationOverlay.x = mWidth;
         AnimationManager.getInstance().add(navSplash);
 
-        Splash mwcSplash = new Splash(mMidiWidgetsContainer, 64, 200, -mWidth, mMidiWidgetsContainer.x);
+        Splash mwcSplash = new Splash(mMidiWidgetsContainer, 64, 40, -mWidth, mMidiWidgetsContainer.x);
         mMidiWidgetsContainer.x = -mWidth;
         AnimationManager.getInstance().add(mwcSplash);
-*/
     }
 
 	@Override
@@ -80,7 +72,7 @@ public class FingerPlayActivity extends InteractiveActivity {
         // MidiWidgetContainer calculates its height depending on the content added.
         mMidiWidgetsContainer = new MidiWidgetContainer(mWidth, mHeight);
         //mMidiWidgetsContainer.z = 1.0f;
-
+ 
         // TODO Make LayoutManager part of GUI lib
         File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/" + mSettingsModel.layoutFile);
         //Log.i("FPA", "mSettingsModel.layoutFile = " + mSettingsModel.layoutFile);
@@ -95,7 +87,9 @@ public class FingerPlayActivity extends InteractiveActivity {
         mRenderer.addSprite( mMidiWidgetsContainer );
  
 		// Navigation
-        mNavigationOverlay = new NavigationOverlay(64, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mHeight);
+        // was 64 for 480
+        int navigationWidth = (mWidth > 480) ? 80 : 64;
+        mNavigationOverlay = new NavigationOverlay(navigationWidth, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mHeight);
         mNavigationOverlay.x = mWidth - mNavigationOverlay.width+2;
         mNavigationOverlay.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
         //mNavigationOverlay.z = 2.0f;
