@@ -42,19 +42,18 @@
 	<layout screenWidth="854" screenHeight="480">
 
 		<screen x="0" y="0" width="854" height="478">
-			<xypad x="32" y="56" width="350" height="378" />
-			<xypad x="412" y="56" width="350" height="378" />
+			<xypad x="25" y="56" width="350" height="378" />
+			<xypad x="405" y="56" width="350" height="378" />
 		</screen>
 
 		<screen x="0" y="482" width="854" height="478">
-			<slider x="20" y="32" width="72" height="434" />
-			<slider x="118" y="32" width="72" height="434" />
-			<slider x="216" y="32" width="72" height="434" />
-			<slider x="314" y="32" width="72" height="434" />
-			<slider x="410" y="32" width="72" height="434" />
-			<slider x="508" y="32" width="72" height="434" />
-			<slider x="604" y="32" width="72" height="434" />
-			<slider x="700" y="32" width="72" height="434" />
+			<slider x="45" y="32" width="80" height="434" />
+			<slider x="145" y="32" width="80" height="434" />
+			<slider x="245" y="32" width="80" height="434" />
+			<slider x="345" y="32" width="80" height="434" />
+			<slider x="445" y="32" width="80" height="434" />
+			<slider x="545" y="32" width="80" height="434" />
+			<slider x="645" y="32" width="80" height="434" />
 		</screen>
 
 		<screen x="0" y="962" width="854" height="478">
