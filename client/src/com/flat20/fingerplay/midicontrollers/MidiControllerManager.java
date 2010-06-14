@@ -15,9 +15,15 @@ import com.flat20.fingerplay.socket.commands.midi.MidiSocketCommand;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 import com.flat20.gui.widgets.IWidget;
 import com.flat20.gui.widgets.MidiWidget;
-import com.flat20.gui.widgets.Widget;
 import com.flat20.gui.widgets.WidgetContainer;
 
+/**
+ * TODO Should parse the same XML data as the LayoutManager and assign controllerNumber
+ * in here rather than relying on LayoutManager for that.
+ * 
+ * @author andreas
+ *
+ */
 public class MidiControllerManager {
 
     private LinkedHashMap<IMidiController, Integer> mMidiControllers = new LinkedHashMap<IMidiController, Integer>();
@@ -38,8 +44,14 @@ public class MidiControllerManager {
 		mConnectionManager.addConnectionListener(mConnectionListener);
 	}
 
+	// Assigns a separate controller number to each IMidiController if LayoutManager hasn't
+	// assigned it already.
     public void addMidiController(IMidiController midiController) {
 		midiController.setOnControlChangeListener( onControlChangeListener );
+
+		if (midiController.getControllerNumber() == IMidiController.CONTROLLER_NUMBER_UNASSIGNED)
+			midiController.setControllerNumber( mControllerIndex );
+
     	mMidiControllers.put(midiController, Integer.valueOf(mControllerIndex));
     	mControllerIndex += midiController.getParameters().length;
     }
@@ -95,13 +107,10 @@ public class MidiControllerManager {
 		final private MidiNoteOff mNoteOff = new MidiNoteOff();
 
 		@Override
-    	public void onControlChange(IMidiController midiController, int index, int value) {
-			//if (mConnectionManager.isConnected()) {
-				int ccIndex = (int) getIndex(midiController);
-				mControlChange.set(0xB0, 0, ccIndex+index, value);
-				//SocketCommand socketCommand = new MidiControlChange(0, 0, ccIndex + index, value);
-				mConnectionManager.send( mControlChange );
-			//}
+    	public void onControlChange(IMidiController midiController, int controllerNumber, int value) {
+			//int ccIndex = (int) getIndex(midiController);
+			mControlChange.set(0xB0, 0, controllerNumber, value);
+			mConnectionManager.send( mControlChange );
     	}
 
     	@Override
@@ -144,7 +153,9 @@ public class MidiControllerManager {
 			if (sm.command == SocketCommand.COMMAND_MIDI_SHORT_MESSAGE) {
 				Log.i("mcm", "server sent cc message");
 				MidiSocketCommand msc = (MidiSocketCommand) sm;
-				Log.i("mcm", " msc = " + msc);
+				int ccIndex = msc.data1;
+				Log.i("mcm", " msc = " + msc + ", ccIndex: " + ccIndex);
+				Log.i("mcm", "channel: " + msc.channel + ", " + msc.command + ", " + msc.data1 + ", " + msc.data2);
 			}
     	}
     };

@@ -21,8 +21,8 @@ public abstract class DefaultMidiWidget extends MidiWidget {
 	final protected MaterialSprite mOutlineSelected;
 	final protected MaterialSprite mTvScanlines;
 
-	public DefaultMidiWidget(String name) {
-		super(name);
+	public DefaultMidiWidget(String name, int controllerNumber) {
+		super(name, controllerNumber);
 
 		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
 		mBackground.x = -BACKGROUND_PADDING;

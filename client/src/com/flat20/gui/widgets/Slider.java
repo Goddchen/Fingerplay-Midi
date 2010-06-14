@@ -34,8 +34,8 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 
 	int lastValue = -1;
 
-	public Slider(String name) {
-		super(name);
+	public Slider(String name, int controllerNumber) {
+		super(name, controllerNumber);
 
 		mMeter = new MaterialSprite(Materials.MC_INDICATOR);
 		mMeterOff = new MaterialSprite(Materials.MC_INDICATOR_OFF);

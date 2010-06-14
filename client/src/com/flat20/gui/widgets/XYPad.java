@@ -35,8 +35,8 @@ public class XYPad extends DefaultMidiWidget implements IMidiController {
 	int lastValueX = -1;
 	int lastValueY = -1;
 
-	public XYPad(String name) {
-		super(name);
+	public XYPad(String name, int controllerNumber) {
+		super(name, controllerNumber);
 
 		mMeter = new MaterialSprite(Materials.MC_XYPAD_INDICATOR);
 		mMeterOff = new MaterialSprite(Materials.MC_XYPAD_INDICATOR_OFF);

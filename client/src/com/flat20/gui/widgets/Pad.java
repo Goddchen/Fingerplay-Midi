@@ -19,21 +19,15 @@ public class Pad extends MidiWidget implements IMidiController {
 
 	final private static int CC_TOUCH = 0;
 
-	final protected static Parameter[] sParameters = {new Parameter(0, "Press", Parameter.TYPE_NOTE, false)};
+	final protected static Parameter[] sParameters = {new Parameter(CC_TOUCH, "Press", Parameter.TYPE_NOTE, false)};
 
 	public Parameter[] getParameters() {
 		return sParameters;
 	}
 
 
-	// are we pushing down
-	//protected boolean mPressed = false;
-
-	// is button turned on/off
-	//protected boolean mActive = false;
-
-	public Pad(String name) {
-		super(name);
+	public Pad(String name, int controllerNumber) {
+		super(name, controllerNumber);
 
 		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
         mBackground.x = -BACKGROUND_PADDING;

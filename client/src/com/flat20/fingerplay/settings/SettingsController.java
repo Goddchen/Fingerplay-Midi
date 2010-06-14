@@ -122,11 +122,11 @@ public class SettingsController {
 		}
     }
 
-    protected void sendControlChange(String controllerName, int index) {
+    protected void sendControlChange(String controllerName, int controllerNumber) {
 		IMidiController mc = mModel.midiControllerManager.getMidiControllerByName(controllerName);
 		if (mc != null) {
-			int ccIndex = (int) mModel.midiControllerManager.getIndex(mc);
-    		MidiControlChange socketCommand = new MidiControlChange(0xB0, 0, ccIndex + index, 0x7F);
+			//int ccIndex = (int) mModel.midiControllerManager.getIndex(mc);
+    		MidiControlChange socketCommand = new MidiControlChange(0xB0, 0, controllerNumber, 0x7F);
     		mConnectionManager.send(socketCommand);
 		}
 

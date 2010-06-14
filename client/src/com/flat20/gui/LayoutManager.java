@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.gui.widgets.Pad;
 import com.flat20.gui.widgets.Slider;
 import com.flat20.gui.widgets.Widget;
@@ -41,7 +42,6 @@ public class LayoutManager {
 	final public static void loadXML(WidgetContainer mainContainer, File xmlFile, int width, int height) {
 
 		try {
-			//File file = new File("test.xml");
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse( xmlFile );
@@ -60,7 +60,7 @@ public class LayoutManager {
 
 			doc.getDocumentElement().normalize();
 
-			// Figure out if it's new format or not.
+			// Figure out if it's new format or not based on the layout width compared to screen width.
 			Element layout = doc.getDocumentElement();
 
 			if (layout.getNodeName().equals("layouts")) {
@@ -99,8 +99,9 @@ public class LayoutManager {
 
 		NodeList screens = layout.getElementsByTagName("screen");
 
+		// Loop through all screens and add any widgets to the WidgetContainer.
+		// A bit of a mix between view and data here.  
 		for (int s = 0; s < screens.getLength(); s++) {
-			//System.out.println("Name: " + screens.item(s).getNodeName());
 
 			if (screens.item(s).getNodeType() == Node.ELEMENT_NODE) {
 
@@ -126,24 +127,23 @@ public class LayoutManager {
 						int widgetY = (int)(getIntegerAttribute(widgetElement, "y")*deltaHeight);
 						int widgetWidth = (int)(getIntegerAttribute(widgetElement, "width")*deltaWidth);
 						int widgetHeight = (int)(getIntegerAttribute(widgetElement, "height")*deltaHeight);
-						//System.out.println(" .x = " + widgetX);
-						//System.out.println(" .y = " + widgetY);
-						//System.out.println(" .width = " + widgetWidth);
-						//System.out.println(" .height = " + widgetHeight);
+						System.out.println(" ?? " + widgetElement.getAttribute("controllerNumber"));
+						int widgetControllerNumber = getIntegerAttribute(widgetElement, "controllerNumber", IMidiController.CONTROLLER_NUMBER_UNASSIGNED);
+
+						System.out.println(name + ": " + widgetControllerNumber);
 
 						Widget widget = null;
 						if (name.equals("button") || name.equals("pad")) {
-							widget = new Pad("Button " + (++numButtons));
-							//System.out.println("screen.addWidget( new Button() );");
+							widget = new Pad("Button " + (++numButtons), widgetControllerNumber);
+
 						} else if (name.equals("slider")) {
-							widget = new Slider("Slider " + (++numSliders));
-							//System.out.println("screen.addWidget( new Slider() );");
+							widget = new Slider("Slider " + (++numSliders), widgetControllerNumber);
+
 						} else if (name.equals("touchpad") || name.equals("xypad")) {
-							widget = new XYPad("XY Pad " + (++numTouchPads));
-							//System.out.println("screen.addWidget( new Touchpad() ); " + numTouchPads);
+							widget = new XYPad("XY Pad " + (++numTouchPads), widgetControllerNumber);
+
 						}
 						if (widget != null) {
-							//Log.i("LM", widget + " x: " + widgetX + " y: " + widgetY + " w: " + widgetWidth + " h: " + widgetHeight);
 							widget.x = widgetX;
 							widget.y = widgetY;
 							widget.setSize(widgetWidth, widgetHeight);
@@ -158,8 +158,22 @@ public class LayoutManager {
 		}
 
 	}
-	
+
 	protected static Integer getIntegerAttribute(Element element, String attributeName) {
 		return Integer.parseInt( element.getAttribute(attributeName) );
 	}
+
+	// Gets attribute integer value if the attribute is set and is a valid integer. Otherwise returns defaultValue.
+	protected static Integer getIntegerAttribute(Element element, String attributeName, int defaultValue) {
+		int result = defaultValue;
+
+		try {
+			if (element.hasAttribute(attributeName))
+				result = Integer.parseInt( element.getAttribute(attributeName) );
+		} catch (Exception e) {
+		}
+
+		return result;
+	}
+
 }

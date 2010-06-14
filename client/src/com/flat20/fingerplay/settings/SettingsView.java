@@ -89,7 +89,7 @@ public class SettingsView extends PreferenceActivity implements Preference.OnPre
 				for (int i=0; i<parameters.length; i++) {
 					if (parameters[i].visible) {
 						Preference p = new Preference(this);
-						p.setKey(mc.getName() + "_" + parameters[i].id);
+						p.setKey(mc.getName() + "_" + (mc.getControllerNumber() + parameters[i].id)); // A Hack so we can use the cc number later. 
 						p.setPersistent(false);
 						p.setTitle("Send " + parameters[i].name);
 						p.setSummary("Sends the " + parameters[i].name + " command to the server.");
@@ -277,8 +277,8 @@ public class SettingsView extends PreferenceActivity implements Preference.OnPre
     		String key = preference.getKey();
     		String name[] = key.split("_");
     		String controllerName = name[0];
-    		int index = Integer.parseInt(name[1]);
-    		mController.sendControlChange(controllerName, index);
+    		int controllerNumber = Integer.parseInt(name[1]);
+    		mController.sendControlChange(controllerName, controllerNumber);
     	}
 
     	return true;

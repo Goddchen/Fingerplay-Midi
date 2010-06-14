@@ -4,25 +4,20 @@ import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.IOnControlChangeListener;
 
 public abstract class MidiWidget extends Widget implements IMidiController {
-/*
-	final protected static int SHADOW_PADDING = 6;
 
-	final protected MaterialSprite mShadow;
-
-	// We need a skinning class
-	final protected MaterialSprite mBackground;
-	final protected MaterialSprite mOutline;
-	final protected MaterialSprite mOutlineSelected;
-	final protected MaterialSprite mTvScanlines;
-*/
 	protected String mName = null;
+
+	// Unique index for each controller. Assigned from MidiControllerManager
+	// when the controller is added to its list. 
+	private int mControllerNumber = CONTROLLER_NUMBER_UNASSIGNED;
 
 	protected boolean mHold = false;
 
-	public MidiWidget(String name) {
+	public MidiWidget(String name, int controllerNumber) {
 		super();
 
 		setName(name);
+		setControllerNumber(controllerNumber);
 	}
 
 	public void setName(String name) {
@@ -32,9 +27,20 @@ public abstract class MidiWidget extends Widget implements IMidiController {
 		return mName;
 	}
 
+
+	@Override
+	public void setControllerNumber(int number) {
+		mControllerNumber = number;
+	}
+
+	@Override
+	public int getControllerNumber() {
+		return mControllerNumber;
+	}
+
 	public void sendControlChange(int index, int value) {
 		if (listener != null) {
-			listener.onControlChange(this, index, value);
+			listener.onControlChange(this, mControllerNumber + index, value);
 		}
 	}
 
