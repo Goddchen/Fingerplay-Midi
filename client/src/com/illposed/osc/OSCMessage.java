@@ -23,7 +23,7 @@ import com.illposed.osc.utility.*;
 public class OSCMessage extends OSCPacket {
 
 	protected String address;
-	protected Vector arguments;
+	protected Vector<Object> arguments;
 
 	/**
 	 * Create an empty OSC Message.
@@ -32,7 +32,7 @@ public class OSCMessage extends OSCPacket {
 	 */
 	public OSCMessage() {
 		super();
-		arguments = new Vector();
+		arguments = new Vector<Object>();
 	}
 
 	/**
@@ -52,12 +52,12 @@ public class OSCMessage extends OSCPacket {
 		super();
 		address = newAddress;
 		if (null != newArguments) {
-			arguments = new Vector(newArguments.length);
+			arguments = new Vector<Object>(newArguments.length);
 			for (int i = 0; i < newArguments.length; i++) {
 				arguments.add(newArguments[i]);
 			}
 		} else
-			arguments = new Vector();
+			arguments = new Vector<Object>();
 		init();
 	}
 	
@@ -110,7 +110,7 @@ public class OSCMessage extends OSCPacket {
 		if (null == arguments)
 			return;
 		stream.writeTypes(arguments);
-		Enumeration enume = arguments.elements();
+		Enumeration<Object> enume = arguments.elements();
 		while (enume.hasMoreElements()) {
 			stream.write(enume.nextElement());
 		}

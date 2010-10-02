@@ -1,5 +1,7 @@
 package com.flat20.gui.widgets;
 
+import java.util.ArrayList;
+
 import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
 
@@ -16,9 +18,11 @@ public class Scrollbar extends Widget implements IScrollListener {
 	private MaterialSprite mThumbHighlight;
 
 	private IScrollable mTarget;
-	private int mVisibleArea; // the screen height for our fullscreen scroll.
+	private int mVisibleArea; // the screen height of the device or the app.
 
-	public Scrollbar(int width, int height, IScrollable target, int visibleArea) {
+	private int mScreenYs[];
+
+	public Scrollbar(int width, int height, IScrollable target, WidgetContainer widgetContainer, int visibleArea) {
 		super(width, height);
 
 		mTarget = target;
@@ -40,7 +44,34 @@ public class Scrollbar extends Widget implements IScrollListener {
 		addSprite(mThumbHighlight);
 
         setSize(width, height);
+
+        addScreensYIn(widgetContainer);
 	}
+	
+	// TODO Replace this with the proper method of having a data class
+	// for the parsed xml data.
+	// We use this function to get all screenYs for the snapping.
+	private void addScreensYIn(WidgetContainer widgetContainer) {
+		ArrayList<Integer> screenYs = new ArrayList<Integer>();
+		IWidget[] widgets = widgetContainer.getWidgets();
+        for (int i=0; i<widgets.length; i++) {
+        	IWidget w = widgets[i];
+        	if (w instanceof WidgetContainer) {
+				WidgetContainer wc = (WidgetContainer) w;
+				screenYs.add(wc.y);
+			}
+        }
+
+        // stupid Integer -> int hack
+        Integer temp[] = new Integer[screenYs.size()];
+        screenYs.toArray( temp );
+
+    	mScreenYs = new int[screenYs.size()];
+        for (int i=0; i<temp.length; i++) {
+        	mScreenYs[i] = temp[i];
+        }
+	}
+
 
 	public void onScrollChanged(int newY) {
 		float dy = Math.abs(newY) / (float)mTarget.getHeight();
@@ -71,39 +102,58 @@ public class Scrollbar extends Widget implements IScrollListener {
 
 	@Override
 	public boolean onTouchMove(int touchX, int touchY, float pressure, int pointerId) {
-		scroll(touchY);
+		scroll(touchY, false);
 		return true;
 	}
 
 	@Override
 	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
 		mThumbHighlight.visible = false;
-		snap(touchY);
+		scroll(touchY, true);
 		return true;
 	}
 
 	@Override
 	public boolean onTouchUpOutside(int touchX, int touchY, float pressure, int pointerId) {
 		mThumbHighlight.visible = false;
-		snap(touchY);
+		scroll(touchY, true);
 		return true;
 	}
 
-	private void snap(int touchY) {
-		int sy = (int)(touchY / (float)mThumb.height);
-		int scrollY = sy*(mThumb.height+1) + (mThumb.height>>1);
-		scroll( scrollY );
-	}
-
-	private void scroll(int touchY) {
+	private void scroll(int touchY, boolean snap) {
 		// clamp y inside our height.
-		int realY = Math.max(0, Math.min(height-mThumb.height, touchY - (mThumb.height>>1)));
-		mThumb.y = realY;
-		mThumbHighlight.y = mThumb.y;
-		float dy = realY / (float)height;
+		touchY = Math.max(0, Math.min(height-mThumb.height, touchY - (mThumb.height>>1)));
+		float dy = touchY / (float)height; // normalized point.
+		mThumbHighlight.y = mThumb.y = touchY; // Update the thumb and the thumb highlighter.
 
-		// animates to y. animation could be done in this class
-		mTarget.scrollTo((int) -(dy*mTarget.getHeight()));
+		int snappedY = (int) (dy*mTarget.getHeight());
+		if (snap) {
+
+			
+			int nearestDiff = 100000;
+			int nearestScreenIndex = -1;
+			final int length = mScreenYs.length;
+			for (int i=0; i<length; i++) {
+				int diff = Math.abs(snappedY - mScreenYs[i]);
+				if (diff < nearestDiff) {
+					nearestScreenIndex = i;
+					nearestDiff = diff;
+				} else if (diff > nearestDiff) {
+					break;
+				} 
+				nearestDiff = diff;
+			}
+
+			if (nearestScreenIndex != -1) {
+				snappedY = mScreenYs[nearestScreenIndex];
+
+				float normalizedY = (float)snappedY / mTarget.getHeight();
+				mThumbHighlight.y = mThumb.y = (int)(normalizedY * this.height);
+			}
+
+		}
+
+		mTarget.scrollTo(-snappedY);
 	}
 
 	public interface IScrollable {

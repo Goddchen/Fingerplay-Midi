@@ -23,7 +23,7 @@ import java.util.Hashtable;
 
 public class OSCPacketDispatcher {
 	// use Hashtable for JDK1.1 compatability
-	private Hashtable addressToClassTable = new Hashtable();
+	private Hashtable<String, OSCListener> addressToClassTable = new Hashtable<String, OSCListener>();
 	
 	/**
 	 * 
@@ -63,7 +63,7 @@ public class OSCPacketDispatcher {
 	}
 	
 	private void dispatchMessage(OSCMessage message, Date time) {
-		Enumeration keys = addressToClassTable.keys();
+		Enumeration<String> keys = addressToClassTable.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			// this supports the OSC regexp facility, but it

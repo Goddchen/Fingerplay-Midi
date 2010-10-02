@@ -1,11 +1,10 @@
 package com.flat20.gui.widgets;
 
 import com.flat20.fingerplay.midicontrollers.IMidiController;
-import com.flat20.fingerplay.midicontrollers.Parameter;
 import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
 
-public class Slider extends DefaultMidiWidget implements IMidiController {
+public class Slider extends DefaultMidiWidget {
 /*
 	final private static ResourceTexture sMeterTex = TextureManager.createResourceTexture(R.drawable.controllers_meter, 4, 4);
 	final private static StretchedMaterial sMeterMat = new StretchedMaterial(sMeterTex);
@@ -17,25 +16,31 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 
 	// IMidiController implementations
 
-	final private static int CC_TOUCH = 0;
-	final private static int CC_VALUE = 1;
-
+	final protected static int CC_TOUCH = 0;
+	final protected static int CC_VALUE = 1;
+/*
 	final private static Parameter[] sParameters = {
 			new Parameter(CC_TOUCH, "Press", Parameter.TYPE_CONTROL_CHANGE, true),
 			new Parameter(CC_VALUE, "Vertical", Parameter.TYPE_CONTROL_CHANGE, true)};
-
-
+*/
+/*
 	public Parameter[] getParameters() {
 		return sParameters;
 	}
 
-	
-	//GLSprite meterOff;
+	public Parameter getParameterById(int parameterId) {
+		for (int i=0; i<sParameters.length; i++) {
+			if (sParameters[i].id == parameterId)
+				return sParameters[i];
+		}
+		return null;
+	}
+*/
 
 	int lastValue = -1;
 
-	public Slider(String name, int controllerNumber) {
-		super(name, controllerNumber);
+	public Slider(IMidiController midiController) {
+		super(midiController);
 
 		mMeter = new MaterialSprite(Materials.MC_INDICATOR);
 		mMeterOff = new MaterialSprite(Materials.MC_INDICATOR_OFF);
@@ -81,7 +86,8 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 		float dy = ((float)touchY / (float)height);
 		int value = (int) Math.max(0, Math.min(dy * 0x7F, 0x7F));
 		if (value != lastValue) {
-			sendControlChange(CC_VALUE, value);
+			getMidiController().sendParameter(CC_VALUE, value);
+			//sendControlChange(CC_VALUE, value);
 			setMeterHeight( Math.max(0, Math.min(touchY, height)) );
 			lastValue = value;
 		}
@@ -90,33 +96,47 @@ public class Slider extends DefaultMidiWidget implements IMidiController {
 
 	@Override
 	public boolean onTouchUp(int touchX, int touchY, float pressure, int pointerId) {
-		if (!isHolding())
+		//if (!isHolding())
 			release(1.0f);
 		return true;
 	}
 
 	@Override
 	public boolean onTouchUpOutside(int touchX, int touchY, float pressure, int pointerId) {
-		if (!isHolding())
+		//if (!isHolding())
 			release(1.0f);
 		return true;
 	}
 
 	@Override
 	protected void press(float pressure) {
-		sendControlChange(CC_TOUCH, 0x7F);
+
+		getMidiController().sendParameter(CC_TOUCH, 0x7F);
+/*
+		if (sParameters[CC_TOUCH].type == Parameter.TYPE_CONTROL_CHANGE)
+			sendControlChange(CC_TOUCH, 0x7F);
+		else
+			sendNoteOn(CC_TOUCH, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
+*/
 		mMeter.visible = true;
 		mMeterOff.visible = false;
 	}
-	
+
 	@Override
 	protected void release(float pressure) {
-		sendControlChange(CC_TOUCH, 0x00);
+
+		getMidiController().sendParameter(CC_TOUCH, 0x00);
+/*
+		if (sParameters[CC_TOUCH].type == Parameter.TYPE_CONTROL_CHANGE)
+			sendControlChange(CC_TOUCH, 0x00);
+		else
+			sendNoteOff(CC_TOUCH,0x00);
+*/
 		mMeter.visible = false;
 		mMeterOff.visible = true;
 	}
  
-	private void setMeterHeight(int meterHeight) {
+	protected void setMeterHeight(int meterHeight) {
 		mMeter.setSize(mMeter.width, meterHeight);
 		mMeterOff.setSize(mMeterOff.width, meterHeight);
 		/*

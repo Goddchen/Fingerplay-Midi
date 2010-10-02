@@ -1,11 +1,10 @@
 package com.flat20.gui.widgets;
 
 import com.flat20.fingerplay.midicontrollers.IMidiController;
-import com.flat20.fingerplay.midicontrollers.Parameter;
 import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
 
-public class Pad extends MidiWidget implements IMidiController {
+public class Pad extends MidiWidget {
 
 	// A dropshadow from DefaultMidiWidget.
 	final protected static int BACKGROUND_PADDING = 6;
@@ -19,15 +18,22 @@ public class Pad extends MidiWidget implements IMidiController {
 
 	final private static int CC_TOUCH = 0;
 
-	final protected static Parameter[] sParameters = {new Parameter(CC_TOUCH, "Press", Parameter.TYPE_NOTE, false)};
-
+	//protected Parameter[] mParameters = {new Parameter(CC_TOUCH, 0, "Press", Parameter.TYPE_NOTE, false)};
+/*
 	public Parameter[] getParameters() {
 		return sParameters;
 	}
 
-
-	public Pad(String name, int controllerNumber) {
-		super(name, controllerNumber);
+	public Parameter getParameterById(int parameterId) {
+		for (int i=0; i<sParameters.length; i++) {
+			if (sParameters[i].id == parameterId)
+				return sParameters[i];
+		}
+		return null;
+	}
+*/
+	public Pad(IMidiController midiController) {
+		super(midiController);
 
 		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
         mBackground.x = -BACKGROUND_PADDING;
@@ -77,28 +83,31 @@ public class Pad extends MidiWidget implements IMidiController {
 		return true;
 	}
 
-	/*
-	private void setSelected(boolean selected) {
-		if (selected) {
-			sendControlChange(CC_TOUCH, 0x7F);
-			meter.visible = true;
-			mActive = true;
-		} else {
-			sendControlChange(CC_TOUCH, 0x00);
-			meter.visible = false;
-			mActive = false;
-		}
-	}*/
-
 	@Override
 	protected void press(float pressure) {
-		sendNoteOn(0, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
+
+		getMidiController().sendParameter(CC_TOUCH, 0x7F);
+		/*
+		if (sParameters[CC_TOUCH].type == Parameter.TYPE_CONTROL_CHANGE)
+			sendControlChange(CC_TOUCH, 0x7F);
+		else
+			sendNoteOn(CC_TOUCH, Math.min(0x7F, Math.round(0x7F * (pressure*3))));
+		*/
+
 		mClicked.visible = true;
 	}
 	
 	@Override
 	protected void release(float pressure) {
-		sendNoteOff(CC_TOUCH, 0x00);
+
+		getMidiController().sendParameter(CC_TOUCH, 0x00);
+		/*
+		if (sParameters[CC_TOUCH].type == Parameter.TYPE_CONTROL_CHANGE)
+			sendControlChange(CC_TOUCH, 0x00);
+		else
+			sendNoteOff(CC_TOUCH,0x00);
+			*/
+
 		mClicked.visible = false;
 	}
 

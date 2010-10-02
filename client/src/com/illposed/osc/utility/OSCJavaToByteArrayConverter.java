@@ -183,7 +183,7 @@ public class OSCJavaToByteArrayConverter {
 	 * Write the type tag for the type represented by the class
 	 * @param c Class of a Java object in the arguments
 	 */
-	public void writeType(Class c) {
+	public void writeType(@SuppressWarnings("rawtypes") Class c) {
 		// A big ol' case statement -- what's polymorphism mean, again?
 		// I really wish I could extend the base classes!
 
@@ -245,11 +245,11 @@ public class OSCJavaToByteArrayConverter {
 	 * Write types for the arguments (use a vector for jdk1.1 compatibility, rather than an ArrayList).
 	 * @param vector  the arguments to an OSCMessage
 	 */
-	public void writeTypes(Vector vector) {
+	public void writeTypes(Vector<Object> vector) {
 		// A big ol' case statement in a for loop -- what's polymorphism mean, again?
 		// I really wish I could extend the base classes!
 
-		Enumeration enm = vector.elements();
+		Enumeration<Object> enm = vector.elements();
 		Object nextObject;
 		while (enm.hasMoreElements()) {
 			nextObject = enm.nextElement();

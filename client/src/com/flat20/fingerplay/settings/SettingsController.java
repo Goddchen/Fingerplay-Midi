@@ -10,7 +10,6 @@ import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.network.ConnectionManager;
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 import com.flat20.fingerplay.socket.commands.SocketStringCommand;
-import com.flat20.fingerplay.socket.commands.midi.MidiControlChange;
 import com.flat20.fingerplay.socket.commands.misc.RequestMidiDeviceList;
 import com.flat20.fingerplay.socket.commands.misc.SetMidiDevice;
 import com.flat20.fingerplay.socket.commands.misc.Version;
@@ -122,12 +121,22 @@ public class SettingsController {
 		}
     }
 
-    protected void sendControlChange(String controllerName, int controllerNumber) {
+    protected void sendControlChange(String controllerName, int parameterId) {
 		IMidiController mc = mModel.midiControllerManager.getMidiControllerByName(controllerName);
 		if (mc != null) {
-			//int ccIndex = (int) mModel.midiControllerManager.getIndex(mc);
-    		MidiControlChange socketCommand = new MidiControlChange(0xB0, 0, controllerNumber, 0x7F);
-    		mConnectionManager.send(socketCommand);
+			mc.sendParameter(parameterId, 0x7F);
+			/*
+			int controllerNumber = mc.getControllerNumber();
+
+			Parameter p = mc.getParameterById(parameterId);
+			if (p.type == Parameter.TYPE_CONTROL_CHANGE) {
+				MidiControlChange socketCommand = new MidiControlChange(0xB0, 0, controllerNumber+p.id, 0x7F);
+				mConnectionManager.send(socketCommand);
+			} else if (p.type == Parameter.TYPE_NOTE) {
+				int controllerIndex = (int) mModel.midiControllerManager.getIndex(mc);
+				MidiNoteOn socketCommand = new MidiNoteOn(0, controllerIndex, 0x7F);
+				mConnectionManager.send(socketCommand);
+			}*/
 		}
 
     }

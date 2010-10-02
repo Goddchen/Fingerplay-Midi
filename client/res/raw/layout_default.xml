@@ -1,40 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layouts>
+<layouts version="2">
 
+	<!--
+			Defaults section
+
+			Specifies the default value for all controllers in the layout file. All values
+			can be, and should be, overriden.
+
+			<id> An identifier for the controller parameter. 0 = Press for example.
+			<channel> Midi channel.
+			<controllerNumber> controller index? .. ???
+			<name> Name to show in the settings page.
+			<visible> Specifies if the parameter is visible and sendable from the settings page.  
+
+	 -->
+	<defaults>
+		<xypad class="com.flat20.gui.widgets.XYPad">
+			<parameter id="0" channel="0" controllerNumber="0" name="Press" type="controlChange" visible="true" />
+			<parameter id="1" channel="0" controllerNumber="0" name="Horizontal" type="controlChange" visible="true" />
+			<parameter id="2" channel="0" controllerNumber="0" name="Vertical" type="controlChange" visible="true" />
+		</xypad>
+		<slider class="com.flat20.gui.widgets.Slider">
+			<parameter id="0" channel="0" controllerNumber="0" name="Press" type="controlChange" visible="true" />
+			<parameter id="1" channel="0" controllerNumber="0" name="Vertical" type="controlChange" visible="true" />
+		</slider>
+		<pad class="com.flat20.gui.widgets.Pad">
+			<parameter id="0" channel="0" controllerNumber="0" name="Press" type="note" visible="false" />
+		</pad>
+
+		<!-- Sensor controllers are being worked on -->
+		<xypad class="com.flat20.gui.widgets.SensorXYPad">
+			<parameter id="0" channel="0" controllerNumber="0" name="Press" type="controlChange" visible="true" />
+			<parameter id="1" channel="0" controllerNumber="0" name="Horizontal" type="controlChange" visible="true" />
+			<parameter id="2" channel="0" controllerNumber="0" name="Vertical" type="controlChange" visible="true" />
+		</xypad>
+		<slider class="com.flat20.gui.widgets.SensorSlider">
+			<parameter id="0" channel="0" controllerNumber="0" name="Press" type="controlChange" visible="true" />
+			<parameter id="1" channel="0" controllerNumber="0" name="Vertical" type="controlChange" visible="true" />
+		</slider>
+	</defaults>
+
+	<!--
+			Layout
+
+			If more than one layout are defined FingerPlay tries to pick the one
+			which width and height is closest to the phone's screen dimensions. 
+
+	 -->
 	<layout screenWidth="480" screenHeight="320">
 
 		<screen x="0" y="0" width="480" height="318">
-			<xypad x="16" y="68" width="184" height="184" />
-			<xypad x="216" y="68" width="184" height="184" />
+			<!--
+				An xypad which sends its parameters on the default channel and
+				using controllerNumber 1, 2 and 3 for Press, Horizontal and Vertical.
+			 -->
+			<xypad x="16" y="68" width="184" height="184">
+				<parameter id="0" controllerNumber="1" />
+				<parameter id="1" controllerNumber="2" />
+				<parameter id="2" controllerNumber="3" />
+			</xypad>
+			<!--
+				An xypad using the default MIDI channel and controllerNumber 4,5 and 6.
+				FingerPlay automatically adds the parameter ID to the base controllerNumber 
+				IF controllerNumber is defined on the XML element and the parameters 
+				are omitted. 
+			 -->
+			<xypad x="216" y="68" width="184" height="184" controllerNumber="4" />
+
 		</screen>
-	
+
+		<!-- 
+			A screen with sliders, all of them sending on channel 1 and different controller numbers.
+		 -->
 		<screen x="0" y="322" width="480" height="318">
-			<slider x="20" y="16" width="72" height="288" />
-			<slider x="120" y="16" width="72" height="288" />
-			<slider x="224" y="16" width="72" height="288" />
-			<slider x="328" y="16" width="72" height="288" />
+			<slider x="20" y="16" width="72" height="288" channel="1" controllerNumber="7" />
+			<slider x="120" y="16" width="72" height="288" channel="1" controllerNumber="9" />
+			<slider x="224" y="16" width="72" height="288" channel="1" controllerNumber="11" />
+			<slider x="328" y="16" width="72" height="288" channel="1" controllerNumber="13" />
 		</screen>
 	
 		<screen x="0" y="642" width="480" height="318">
-			<pad x="64" y="16" width="60" height="60" />
-			<pad x="140" y="16" width="60" height="60" />
-			<pad x="216" y="16" width="60" height="60" />
-			<pad x="292" y="16" width="60" height="60" />
+			<pad x="64" y="16" width="60" height="60" controllerNumber="15" />
+			<pad x="140" y="16" width="60" height="60" controllerNumber="15" />
+			<pad x="216" y="16" width="60" height="60" controllerNumber="15" />
+			<pad x="292" y="16" width="60" height="60" controllerNumber="15" />
 	
-			<pad x="64" y="92" width="60" height="60" />
-			<pad x="140" y="92" width="60" height="60" />
-			<pad x="216" y="92" width="60" height="60" />
-			<pad x="292" y="92" width="60" height="60" />
+			<pad x="64" y="92" width="60" height="60" controllerNumber="15" />
+			<pad x="140" y="92" width="60" height="60" controllerNumber="15" />
+			<pad x="216" y="92" width="60" height="60" controllerNumber="15" />
+			<pad x="292" y="92" width="60" height="60" controllerNumber="15" />
 	
-			<pad x="64" y="168" width="60" height="60" />
-			<pad x="140" y="168" width="60" height="60" />
-			<pad x="216" y="168" width="60" height="60" />
-			<pad x="292" y="168" width="60" height="60" />
-	
-			<pad x="64" y="244" width="60" height="60" />
-			<pad x="140" y="244" width="60" height="60" />
-			<pad x="216" y="244" width="60" height="60" />
-			<pad x="292" y="244" width="60" height="60" />
+			<pad x="64" y="168" width="60" height="60" controllerNumber="15" />
+			<pad x="140" y="168" width="60" height="60" controllerNumber="15" />
+			<pad x="216" y="168" width="60" height="60" controllerNumber="15" />
+			<pad x="292" y="168" width="60" height="60" controllerNumber="15" />
+
+			<pad x="64" y="244" width="60" height="60" controllerNumber="15" />
+			<pad x="140" y="244" width="60" height="60" controllerNumber="15" />
+			<pad x="216" y="244" width="60" height="60" controllerNumber="15" />
+			<pad x="292" y="244" width="60" height="60" controllerNumber="15" />
 		</screen>
 	</layout>
 
@@ -42,39 +106,58 @@
 	<layout screenWidth="854" screenHeight="480">
 
 		<screen x="0" y="0" width="854" height="478">
-			<xypad x="25" y="56" width="350" height="378" />
-			<xypad x="405" y="56" width="350" height="378" />
+			<xypad x="25" y="56" width="350" height="378" controllerNumber="0">
+				<!--  Should override internal settings so all parameters are still ok. -->
+				<parameter id="0" name="Press" type="controlChange" />
+				<parameter id="1" name="Horizontal" type="controlChange" />
+				<parameter id="2" name="Vertical" type="controlChange" />
+			</xypad>
+			<xypad x="405" y="56" width="350" height="378" controllerNumber="3">
+				<!--  Should override internal settings so all parameters are still ok. -->
+				<parameter id="0" type="controlChange" />
+				<parameter id="1" type="controlChange" />
+				<parameter id="2" name="controlChange" />
+			</xypad>
 		</screen>
 
 		<screen x="0" y="482" width="854" height="478">
-			<slider x="45" y="32" width="80" height="434" />
-			<slider x="145" y="32" width="80" height="434" />
-			<slider x="245" y="32" width="80" height="434" />
-			<slider x="345" y="32" width="80" height="434" />
-			<slider x="445" y="32" width="80" height="434" />
-			<slider x="545" y="32" width="80" height="434" />
-			<slider x="645" y="32" width="80" height="434" />
+			<slider x="45" y="32" width="80" height="434" controllerNumber="6" />
+			<slider x="145" y="32" width="80" height="434" controllerNumber="8" />
+			<slider x="245" y="32" width="80" height="434" controllerNumber="10" />
+			<slider x="345" y="32" width="80" height="434" controllerNumber="12" />
+			<slider x="445" y="32" width="80" height="434" controllerNumber="14" />
+			<slider x="545" y="32" width="80" height="434" controllerNumber="16" />
+			<slider x="645" y="32" width="80" height="434" controllerNumber="18" />
 		</screen>
 
 		<screen x="0" y="962" width="854" height="478">
-			<pad x="55" y="40" width="110" height="110" />
-			<pad x="195" y="40" width="110" height="110" />
-			<pad x="335" y="40" width="110" height="110" />
-			<pad x="475" y="40" width="110" height="110" />
-			<pad x="615" y="40" width="110" height="110" />
+			<pad x="55" y="40" width="110" height="110" controllerNumber="20" />
+			<pad x="195" y="40" width="110" height="110" controllerNumber="21" />
+			<pad x="335" y="40" width="110" height="110" controllerNumber="22" />
+			<pad x="475" y="40" width="110" height="110" controllerNumber="23" />
+			<pad x="615" y="40" width="110" height="110" controllerNumber="24" />
 
-			<pad x="55" y="180" width="110" height="110" />
-			<pad x="195" y="180" width="110" height="110" />
-			<pad x="335" y="180" width="110" height="110" />
-			<pad x="475" y="180" width="110" height="110" />
-			<pad x="615" y="180" width="110" height="110" />
+			<pad x="55" y="180" width="110" height="110" controllerNumber="25" />
+			<pad x="195" y="180" width="110" height="110" controllerNumber="26" />
+			<pad x="335" y="180" width="110" height="110" controllerNumber="27" />
+			<pad x="475" y="180" width="110" height="110" controllerNumber="28" />
+			<pad x="615" y="180" width="110" height="110" controllerNumber="29" />
 
-			<pad x="55" y="320" width="110" height="110" />
-			<pad x="195" y="320" width="110" height="110" />
-			<pad x="335" y="320" width="110" height="110" />
-			<pad x="475" y="320" width="110" height="110" />
-			<pad x="615" y="320" width="110" height="110" />
+			<pad x="55" y="320" width="110" height="110" controllerNumber="30" />
+			<pad x="195" y="320" width="110" height="110" controllerNumber="31" />
+			<pad x="335" y="320" width="110" height="110" controllerNumber="32" />
+			<pad x="475" y="320" width="110" height="110" controllerNumber="33" />
+			<pad x="615" y="320" width="110" height="110" controllerNumber="34" />
+		</screen>
 
+		<screen x="0" y="1442" width="854" height="478">
+			<orientation x="245" y="250" width="250" height="200" controllerNumber="35" />
+			<accelerometer x="245" y="6" width="200" height="200" controllerNumber="38" />
+			<magfield x="5" y="250" width="200" height="200" controllerNumber="41" />
+			<light x="5" y="16" width="42" height="200" controllerNumber="44" />
+			<pressure x="55" y="16" width="42" height="200" controllerNumber="46" />
+			<proximity x="105" y="16" width="42" height="200" controllerNumber="48" />
+			<temperature x="155" y="16" width="42" height="200" controllerNumber="50" />
 		</screen>
 
 	</layout>

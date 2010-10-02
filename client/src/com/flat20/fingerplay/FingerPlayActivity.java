@@ -1,8 +1,15 @@
 package com.flat20.fingerplay;
 
+
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.widget.Toast;
@@ -19,7 +26,7 @@ import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.flat20.gui.LayoutManager;
 
-public class FingerPlayActivity extends InteractiveActivity {
+public class FingerPlayActivity extends InteractiveActivity implements SensorEventListener {
 
 	private SettingsModel mSettingsModel;
 
@@ -30,7 +37,16 @@ public class FingerPlayActivity extends InteractiveActivity {
     private Logo mLogo;
  
     private NavigationOverlay mNavigationOverlay; 
- 
+
+
+    // Sensor properties.
+    // TODO Move to a separate class.
+
+    public SensorManager sensorManager;
+    private List<Sensor> sensors = new ArrayList<Sensor>();
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -47,6 +63,12 @@ public class FingerPlayActivity extends InteractiveActivity {
 
         Toast info = Toast.makeText(this, "Go to http://thesundancekid.net/ for help.", Toast.LENGTH_LONG);
         info.show();
+
+        // Sensor code
+        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        sensors = new ArrayList<Sensor>(sensorManager.getSensorList(Sensor.TYPE_ALL));
+        startSensors();
+
 
         // Simple splash animation
 
@@ -75,7 +97,7 @@ public class FingerPlayActivity extends InteractiveActivity {
  
         // TODO Make LayoutManager part of GUI lib
         File xmlFile = new File(Environment.getExternalStorageDirectory() + "/FingerPlayMIDI/" + mSettingsModel.layoutFile);
-        //Log.i("FPA", "mSettingsModel.layoutFile = " + mSettingsModel.layoutFile);
+
         if (xmlFile != null && xmlFile.canRead())
         	LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
         else
@@ -89,14 +111,18 @@ public class FingerPlayActivity extends InteractiveActivity {
 		// Navigation
         // was 64 for 480
         int navigationWidth = (mWidth > 480) ? 80 : 64;
-        mNavigationOverlay = new NavigationOverlay(navigationWidth, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mHeight);
+        mNavigationOverlay = new NavigationOverlay(navigationWidth, mHeight-16, mNavigationListener, mMidiWidgetsContainer, mMidiWidgetsContainer, mHeight);
         mNavigationOverlay.x = mWidth - mNavigationOverlay.width+2;
         mNavigationOverlay.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
-        //mNavigationOverlay.z = 2.0f;
 
+        //mNavigationOverlay.z = 2.0f;
+ 
         //mNavigationButtons.setScreenHeight( 320 );
         // Navigation goes on top.
         mRenderer.addSprite( mNavigationOverlay );
+        
+        
+        
 	}
 /*
 	@Override
@@ -107,12 +133,12 @@ public class FingerPlayActivity extends InteractiveActivity {
 */
 
 	NavigationOverlay.IListener mNavigationListener = new NavigationOverlay.IListener() {
-
+/*
 		@Override
 		public void onReleaseAllSelected() {
 			mMidiControllerManager.releaseAllHeld();
 		}
-
+*/
 		@Override
 		public void onSettingsSelected() {
 			Intent settingsIntent = new Intent(getApplicationContext(), SettingsView.class);
@@ -135,6 +161,39 @@ public class FingerPlayActivity extends InteractiveActivity {
 
 		System.runFinalizersOnExit(true);
 		System.exit(0);
+	}
+
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		//Log.d("ACCU", String.format("onAccuracyChanged  sensor: %d   accuraccy: %d", sensor, accuracy));
+	}
+
+    // Not calling start/stop on MidiControllerManager anymore. Activity won't get
+    // a onSensorChanged call unless we've registered a listener for it anyway.
+	public boolean startSensors() {
+		boolean retval = true;
+		for (int i = 0; i < sensors.size(); i++) {
+			boolean res = sensorManager.registerListener(this, sensors.get(i), SensorManager.SENSOR_DELAY_UI);
+			retval = retval && res;
+		}
+		return retval;
+	}
+
+	public void stopSensors() {
+		for (int i = 0; i < sensors.size(); i++)
+			sensorManager.unregisterListener(this, sensors.get(i));
+	}
+
+	public void onSensorChanged(SensorEvent e) {
+
+/*
+  		int sensorReporting = e.sensor.getType();
+		String str = "Sensor " + sensorReporting + " changed: ";
+		for (int i = 0; i < e.values.length; i++)
+			str += " " + e.values[i] + " ";
+		Log.i("SENSOR", str);
+*/
+		mMidiControllerManager.onSensorChanged(e.sensor, e.values);
 	}
 
 }

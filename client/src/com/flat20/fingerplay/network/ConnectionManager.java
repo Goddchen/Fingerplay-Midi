@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.os.Handler;
-
 import com.flat20.fingerplay.socket.commands.SocketCommand;
 
 public class ConnectionManager {

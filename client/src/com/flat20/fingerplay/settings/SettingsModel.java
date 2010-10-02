@@ -36,6 +36,7 @@ public class SettingsModel {
 	public String[] layoutFiles = null;
 
 
+
 	private static SettingsModel sSingleton = new SettingsModel(); 
 
 	public static SettingsModel getInstance() {

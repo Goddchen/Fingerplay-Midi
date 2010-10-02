@@ -3,7 +3,6 @@ package com.illposed.osc;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.GregorianCalendar;
 import java.util.Vector;
 
 import com.illposed.osc.utility.*;
@@ -39,7 +38,7 @@ public class OSCBundle extends OSCPacket {
 	public static final Date TIMESTAMP_IMMEDIATE = new Date(0);
 
 	protected Date timestamp;
-	protected Vector packets;
+	protected Vector<OSCPacket> packets;
 
 	/**
 	 * Create a new empty OSCBundle with a timestamp of immediately.
@@ -73,12 +72,12 @@ public class OSCBundle extends OSCPacket {
 	public OSCBundle(OSCPacket[] packets, Date timestamp) {
 		super();
 		if (null != packets) {
-			this.packets = new Vector(packets.length);
+			this.packets = new Vector<OSCPacket>(packets.length);
 			for (int i = 0; i < packets.length; i++) {
 				this.packets.add(packets[i]);
 			}
 		} else
-			this.packets = new Vector();
+			this.packets = new Vector<OSCPacket>();
 		this.timestamp = timestamp;
 		init();
 	}

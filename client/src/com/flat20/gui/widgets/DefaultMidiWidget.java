@@ -1,5 +1,6 @@
 package com.flat20.gui.widgets;
 
+import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.gui.Materials;
 import com.flat20.gui.sprites.MaterialSprite;
 
@@ -21,8 +22,8 @@ public abstract class DefaultMidiWidget extends MidiWidget {
 	final protected MaterialSprite mOutlineSelected;
 	final protected MaterialSprite mTvScanlines;
 
-	public DefaultMidiWidget(String name, int controllerNumber) {
-		super(name, controllerNumber);
+	public DefaultMidiWidget(IMidiController midiController) {
+		super(midiController);
 
 		mBackground = new MaterialSprite(Materials.MC_BACKGROUND);
 		mBackground.x = -BACKGROUND_PADDING;
