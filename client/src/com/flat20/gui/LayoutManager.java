@@ -283,7 +283,7 @@ public class LayoutManager {
 
 							// Load any XML parameters
 							updateParameters(mc.getParameters(), widgetElement);
-							System.out.println(mc);
+							Log.i("LayoutManager", "Added MidiController: " + mc.toString());
 
 						}
 					}
@@ -324,8 +324,6 @@ public class LayoutManager {
 				wc.x = screenX;
 				wc.y = screenY;
 
-				//int autoControllerNumber = 0;
-
 				NodeList widgets = screenElement.getChildNodes();
 				final int wlength =  widgets.getLength();
 				for (int e = 0; e < wlength; e++) {
@@ -346,60 +344,47 @@ public class LayoutManager {
 							mc.setName( "Button " + (++numButtons) );
 
 							Parameter[] parameters = cloneParameters(defaultParameters.get("pad"));
-							/*
-							for (int i=0; i<parameters.length; i++) {
-								parameters[i].controllerNumber = autoControllerNumber++;
-							}*/
 
 							mc.setParameters( parameters );
-							widget = new Pad(mc);//"Button " + (++numButtons), widgetControllerNumber);
+							widget = new Pad(mc);
 
 						} else if (name.equals("slider")) {
 							mc.setName( "Slider " + (++numSliders) );
 
 							Parameter[] parameters = cloneParameters(defaultParameters.get("slider"));
-							/*
-							for (int i=0; i<parameters.length; i++) {
-								parameters[i].controllerNumber = autoControllerNumber++;
-							}*/
 
 							mc.setParameters( parameters );
-							widget = new Slider(mc);//"Slider " + (++numSliders), widgetControllerNumber);
+							widget = new Slider(mc);
 
 						} else if (name.equals("touchpad") || name.equals("xypad")) {
 							mc.setName( "XY Pad " + (++numTouchPads) );
 
 							Parameter[] parameters = cloneParameters(defaultParameters.get("xypad"));
-							/*
-							for (int i=0; i<parameters.length; i++) {
-								parameters[i].controllerNumber = autoControllerNumber++;
-							}*/
 
 							mc.setParameters( parameters );
-							widget = new XYPad(mc);//"XY Pad " + (++numTouchPads), widgetControllerNumber);
+							widget = new XYPad(mc);
 						}
 						else if (name.equals("accelerometer") 
 								|| name.equals("orientation") 
 								|| name.equals("magfield")
 								|| name.equals("gyroscope")) {	//3-axis
-							mc.setName( "Sensor " + name );// + " " + (++numTouchPads) );
+							mc.setName( "Sensor " + name );
  
 							Parameter[] parameters = cloneParameters(defaultParameters.get("xypad"));
 
 							mc.setParameters( parameters );
 							widget = new SensorXYPad( mc );
-							//widget = new XYPad("Sensor " + name, widgetControllerNumber);
 						}
 						else if (name.equals("light")
 								|| name.equals("pressure")
 								|| name.equals("proximity")
 								|| name.equals("temperature")) {	//single value
-							mc.setName( "Sensor " + name);// + " " + (++numSliders) );
+							mc.setName( "Sensor " + name);
 
 							Parameter[] parameters = cloneParameters(defaultParameters.get("slider"));
 
 							mc.setParameters( parameters );
-							widget = new SensorSlider(mc);//"Slider " + (++numSliders), widgetControllerNumber);
+							widget = new SensorSlider(mc);
 						}
  
 						if (widget != null) {

@@ -73,6 +73,13 @@ public abstract class AbstractMidiController implements IMidiController {
 			case Parameter.TYPE_CONTROL_CHANGE:
 				mListener.onControlChange(this, p.channel, p.controllerNumber, value);
 				break;
+			case Parameter.TYPE_NOTE: // TODO NOTE_ON/OFF are never sent, just NOTE. Is this the right class to choose what's sent?
+				if (value != 0)
+					mListener.onNoteOn(this, p.channel, p.controllerNumber, value);
+				else
+					mListener.onNoteOff(this, p.channel, p.controllerNumber, value);
+				break;
+					
 			case Parameter.TYPE_NOTE_ON:
 				mListener.onNoteOn(this, p.channel, p.controllerNumber, value);
 				break;

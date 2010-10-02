@@ -118,22 +118,18 @@ public class MidiControllerManager {
 			mControlChange.set(0xB0, channel, controllerNumber, value);
 			mConnectionManager.send( mControlChange );
     	}
-
+ 
     	@Override
     	public void onNoteOn(IMidiController midiController, int channel, int key, int velocity) {
     		//System.out.println("onNoteOn " + channel + ", " + key + ", " + velocity);
-			//int controllerIndex = (int) getIndex(midiController);
 			// midi channel, key, velocity
 			mNoteOn.set(channel, key, velocity);
-			//socketCommand = new MidiNoteOn(0, controllerIndex, velocity);
 			mConnectionManager.send( mNoteOn );
     	}
 
     	@Override
     	public void onNoteOff(IMidiController midiController, int channel, int key, int velocity) {
     		//System.out.println("onNoteOff " + channel + ", " + key + ", " + velocity);
-			//int controllerIndex = (int) getIndex(midiController);
-			//socketCommand = new MidiNoteOff(0, controllerIndex, velocity);
 			mNoteOff.set(channel, key, velocity);
 			mConnectionManager.send(mNoteOff);
     	}
