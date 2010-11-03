@@ -81,24 +81,24 @@
 	
 		<screen x="0" y="642" width="480" height="318">
 			<pad x="64" y="16" width="60" height="60" controllerNumber="15" />
-			<pad x="140" y="16" width="60" height="60" controllerNumber="15" />
-			<pad x="216" y="16" width="60" height="60" controllerNumber="15" />
-			<pad x="292" y="16" width="60" height="60" controllerNumber="15" />
+			<pad x="140" y="16" width="60" height="60" controllerNumber="16" />
+			<pad x="216" y="16" width="60" height="60" controllerNumber="17" />
+			<pad x="292" y="16" width="60" height="60" controllerNumber="18" />
 	
-			<pad x="64" y="92" width="60" height="60" controllerNumber="15" />
-			<pad x="140" y="92" width="60" height="60" controllerNumber="15" />
-			<pad x="216" y="92" width="60" height="60" controllerNumber="15" />
-			<pad x="292" y="92" width="60" height="60" controllerNumber="15" />
+			<pad x="64" y="92" width="60" height="60" controllerNumber="19" />
+			<pad x="140" y="92" width="60" height="60" controllerNumber="20" />
+			<pad x="216" y="92" width="60" height="60" controllerNumber="21" />
+			<pad x="292" y="92" width="60" height="60" controllerNumber="22" />
 	
-			<pad x="64" y="168" width="60" height="60" controllerNumber="15" />
-			<pad x="140" y="168" width="60" height="60" controllerNumber="15" />
-			<pad x="216" y="168" width="60" height="60" controllerNumber="15" />
-			<pad x="292" y="168" width="60" height="60" controllerNumber="15" />
+			<pad x="64" y="168" width="60" height="60" controllerNumber="23" />
+			<pad x="140" y="168" width="60" height="60" controllerNumber="24" />
+			<pad x="216" y="168" width="60" height="60" controllerNumber="25" />
+			<pad x="292" y="168" width="60" height="60" controllerNumber="26" />
 
-			<pad x="64" y="244" width="60" height="60" controllerNumber="15" />
-			<pad x="140" y="244" width="60" height="60" controllerNumber="15" />
-			<pad x="216" y="244" width="60" height="60" controllerNumber="15" />
-			<pad x="292" y="244" width="60" height="60" controllerNumber="15" />
+			<pad x="64" y="244" width="60" height="60" controllerNumber="27" />
+			<pad x="140" y="244" width="60" height="60" controllerNumber="28" />
+			<pad x="216" y="244" width="60" height="60" controllerNumber="29" />
+			<pad x="292" y="244" width="60" height="60" controllerNumber="30" />
 		</screen>
 	</layout>
 
