@@ -1,1 +1,32 @@
-Test
+<html>
+<body>
+<h2>FingerPlay MIDI</a>
+	<p><img class="alignnone" title="FingerPlay MIDI Sliders" src="fp-sliders-50.png" alt="" width="240" height="160" /><img class="alignnone" style="margin-left: 10px;" title="FingerPlay MIDI Settings" src="fp-touchpads-50.png" alt="" width="240" height="160" /></p>
+<p>FingerPlay MIDI is a MIDI controller for Android. Any changes made to the controllers on your phone are transmitted over the WIFI network to a receiving computer using either OSC messages or its own FingerPlay format. The MIDI messages can then be sent to any music software capable of receiving MIDI input.</p>
+<p><a href="market://search/?q=pname:com.flat20.fingerplay" ><img class="alignnone" src="http://qrcode.kaywa.com/img.php?s=2&amp;d=market%3A%2F%2Fsearch%2F%3Fq%3Dpname%3Acom.flat20.fingerplay" alt="qrcode" /></a></p>
+<p><a href="https://market.android.com/details?id=de.goddchen.android.fingerplay&amp;feature=search_result">Download FingerPlay MIDI from the Android Market</a></p>
+<!--<p><a href="http://thesundancekid.net/FingerPlay/FingerPlayMIDI-0.9.0.apk" >Download FingerPlayMIDI-0.9.0.apk</a> if your phone can&#8217;t access the market.</p>-->
+<p><a href="https://github.com/Goddchen/Fingerplay-Midi">Get the source code from GitHub.</a></p>
+<p>A <a href="OSC_Android_Fingerplay.pd" >FingerPlay MIDI patch for Pure Data</a> by Bérenger Recoules</p>
+<p><a href="generator/index.html">FingerPlay MIDI Layout Generator</a> by Bruno Molteni</p>
+<h4>FingerPlay in Windows with LoopBe1</h4>
+<p>Download and install <a href="http://www.java.com/getjava/" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://www.java.com']);">Java</a> and remember to <a href="http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://geekswithblogs.net']);">set the path to Java</a>.</p>
+<p>Download and install a virtual MIDI driver like <a href="http://www.nerds.de/en/loopbe1.html" onclick="javascript:_gaq.push(['_trackEvent','outbound-article','http://www.nerds.de']);">LoopBe1</a>.</p>
+<p>Download the <a href="FingerPlayServer.zip" >FingerPlayServer</a> zip-file and unpack it somewhere on your hard drive. Start it from the command line with:<br />
+java -jar FingerPlayServer.jar</p>
+<p>The server will display the IP address and port number you need to connect to it from your phone.</p>
+<p>Once you&#8217;ve connected, select LoopBe1 from the list of available MIDI output devices.</p>
+<p>Start Ableton and make sure LoopBe1 is enabled for input in the MIDI settings.</p>
+<p>Any changes made to the controllers in FingerPlay will be sent over the network to Ableton as a MIDI Message.</p>
+<h4>OSCulator</h4>
+<p>Click the top right button in FingerPlay to go to the settings screen, choose “OSC Server” as the “Server Type” and in “Server Address” enter your computer’s IP address followed by “:8000? (which is the default port for OSCulator).</p>
+<p>So if your IP address is 192.168.0.4, enter “192.168.0.4:8000?.</p>
+<p>If the phone manages to connect you can back out of the settings screen and play around with the MIDI controllers in FingerPlay which will send messages to OSCulator.</p>
+<p>If you see the messages coming through to OSCulator, you can click one of them and set its event type to “MIDI CC” and give it a control change value in the “Value” column. This should be enough to send it to Ableton as long as you’ve enabled OSCulator in Ableton Live’s preferences (enable “track” and “remote” for OSCulator under the “MIDI Sync” tab).</p>
+<h4>Custom layouts</h4>
+<p>If you create a folder on your sdcard called FingerPlayMIDI and put a file in it called layout.xml, FingerPlay will use that file instead of its own default layout.</p>
+<p>Here’s the default layout file:</p>
+<p><a href="https://github.com/Goddchen/Fingerplay-Midi/blob/master/client/res/raw/layout_default.xml">https://github.com/Goddchen/Fingerplay-Midi/blob/master/client/res/raw/layout_default.xml</a></p>
+<p>Remember to turn off USB storage before starting FingerPlay MIDI or it won’t be able to access the file on the card.</p>
+</body>
+</html>
