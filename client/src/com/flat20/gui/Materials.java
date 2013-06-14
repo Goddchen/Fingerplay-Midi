@@ -1,12 +1,7 @@
 package com.flat20.gui;
 
-import com.flat20.fingerplay.R;
-import com.flat20.gui.textures.NineSliceMaterial;
-import com.flat20.gui.textures.ResourceTexture;
-import com.flat20.gui.textures.StretchedMaterial;
-import com.flat20.gui.textures.Texture;
-import com.flat20.gui.textures.TextureManager;
-import com.flat20.gui.textures.TiledMaterial;
+import com.flat20.gui.textures.*;
+import de.goddchen.android.fingerplay.R;
 
 public class Materials {
 

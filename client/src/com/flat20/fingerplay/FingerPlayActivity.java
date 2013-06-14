@@ -1,16 +1,21 @@
 package com.flat20.fingerplay;
 
 
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.*;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
+import com.android.vending.billing.IInAppBillingService;
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
 import com.flat20.fingerplay.network.ConnectionManager;
 import com.flat20.fingerplay.settings.SettingsModel;
@@ -23,6 +28,7 @@ import com.flat20.gui.animations.Splash;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import de.goddchen.android.fingerplay.R;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -46,6 +52,25 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
 
     public SensorManager sensorManager;
     private List<Sensor> sensors = new ArrayList<Sensor>();
+
+    private IInAppBillingService mBillingService;
+
+    public static final String IAP_SUBS_KEY = "subs_1";
+
+    private static final int REQUEST_PURCHASE = 0;
+
+    private ServiceConnection mBillingServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mBillingService = IInAppBillingService.Stub.asInterface(service);
+            checkPurchases();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBillingService = null;
+        }
+    };
 
 
     @Override
@@ -81,11 +106,120 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         mMidiWidgetsContainer.x = -mWidth;
         AnimationManager.getInstance().add(mwcSplash);
 
-        if (TextUtils.isEmpty(PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("settings_server_address", null))) {
-            Toast.makeText(this, "You haven't setup a server yet.\nShowing settings!", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(getApplicationContext(), SettingsView.class));
+        boolean result = bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND"),
+                mBillingServiceConnection, Context.BIND_AUTO_CREATE);
+        if (!result) {
+            unableToVerifyLicense("Unable to connect to billing service.\nSorry, but you won't be able to use the app."
+                    , false);
         }
+    }
+
+    private void unableToVerifyLicense(String message, boolean showSubscripeButton) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setMessage("Sorry, unable to check your subscription:\n" + message)
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setCancelable(false);
+        if (showSubscripeButton) {
+            builder.setPositiveButton("Subscribe", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    subscribe();
+                }
+            });
+        }
+        builder.show();
+    }
+
+    private void subscribe() {
+        try {
+            Bundle bundle = mBillingService.getBuyIntent(3, getPackageName(), IAP_SUBS_KEY, "subs", null);
+            PendingIntent pendingIntent = bundle.getParcelable("BUY_INTENT");
+            if (bundle.getInt("RESPONSE_CODE") == 0) {
+                startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_PURCHASE, new Intent(), 0, 0, 0);
+            } else {
+                unableToVerifyLicense("Error during subscription process", true);
+            }
+        } catch (Exception e) {
+            Log.e("Fingerplay", "Error subscribing", e);
+            unableToVerifyLicense("Error during subscription process", true);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PURCHASE) {
+            if (resultCode == RESULT_OK && data.getIntExtra("RESPONSE_CODE", 1) == 0) {
+                checkPurchases();
+            } else {
+                unableToVerifyLicense("Error during subscription process", true);
+            }
+        }
+    }
+
+    private void checkPurchases() {
+        try {
+            Bundle ownedItems = mBillingService.getPurchases(3, getPackageName(), "subs", null);
+            if (ownedItems.getInt("RESPONSE_CODE") == 0) {
+                ArrayList<String> ownedSkus = ownedItems.getStringArrayList("INAPP_PURCHASE_ITEM_LIST");
+                ArrayList<String> ownedData = ownedItems.getStringArrayList("INAPP_PURCHASE_DATA_LIST");
+                if (ownedSkus == null || ownedSkus.isEmpty()) {
+                    showSubscribeDialog();
+                } else {
+                    for (int i = 0; i < ownedSkus.size(); i++) {
+                        if (IAP_SUBS_KEY.equals(ownedSkus.get(i))) {
+                            JSONObject jsonData = new JSONObject(ownedData.get(i));
+                            int purchaseState = jsonData.getInt("purchaseState");
+                            if (purchaseState == 0) {
+                                Toast.makeText(this, "Active subscription verified", Toast.LENGTH_SHORT).show();
+                                if (TextUtils.isEmpty(PreferenceManager.getDefaultSharedPreferences(this)
+                                        .getString("settings_server_address", null))) {
+                                    Toast.makeText(this, "You haven't setup a server yet.\nShowing settings!", Toast.LENGTH_SHORT).show();
+                                    startActivity(new Intent(getApplicationContext(), SettingsView.class));
+                                }
+                            } else if (purchaseState == 1) {
+                                unableToVerifyLicense("Your subscription is cancelled", true);
+                            } else if (purchaseState == 2) {
+                                unableToVerifyLicense("Your subscription was refunded", true);
+                            } else {
+                                unableToVerifyLicense("Unknown subscription state", true);
+                            }
+                        }
+                    }
+                }
+            } else {
+                unableToVerifyLicense("Error checking for your subscription", true);
+            }
+        } catch (Exception e) {
+            Log.e("Fingerplay", "Error checking for purchases", e);
+            unableToVerifyLicense("Error checking for your subscription", true);
+        }
+    }
+
+    private void showSubscribeDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("The only possible model of how to raise some money on the project so that I can invest some hours every month was a subscription model.\n\n"
+                        + "So if you really love this app, subscribe and enjoy the app and regular updates!\n\n"
+                        + "Please note that you have a 7 day trial period before you have pay anything!")
+                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setCancelable(false)
+                .setPositiveButton("Subscribe", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        subscribe();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -164,6 +298,10 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
     protected void onDestroy() {
         ConnectionManager.getInstance().cleanup();
         super.onDestroy();
+
+        if (mBillingServiceConnection != null) {
+            unbindService(mBillingServiceConnection);
+        }
 
         System.runFinalizersOnExit(true);
         System.exit(0);
