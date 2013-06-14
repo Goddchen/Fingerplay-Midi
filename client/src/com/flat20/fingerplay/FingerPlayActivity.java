@@ -27,6 +27,7 @@ import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Splash;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
+import com.google.analytics.tracking.android.EasyTracker;
 import de.goddchen.android.fingerplay.BuildConfig;
 import de.goddchen.android.fingerplay.R;
 import org.json.JSONObject;
@@ -73,6 +74,17 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         }
     };
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -59,6 +59,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="FingerPlayCommon" level="project" />
     <orderEntry type="library" name="GUI" level="project" />
+    <orderEntry type="library" name="libGoogleAnalyticsV2" level="project" />
   </component>
 </module>
 

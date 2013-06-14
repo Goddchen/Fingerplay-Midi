@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.flat20.fingerplay.midicontrollers.IMidiController;
 import com.flat20.fingerplay.midicontrollers.Parameter;
 import com.flat20.fingerplay.network.ConnectionManager;
+import com.google.analytics.tracking.android.EasyTracker;
 import de.goddchen.android.fingerplay.R;
 
 import java.util.Set;
@@ -28,6 +29,18 @@ public class SettingsView extends PreferenceActivity implements Preference.OnPre
 
 
     protected ProgressDialog mConnectingDialog = null;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
