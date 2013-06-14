@@ -27,6 +27,7 @@ import com.flat20.gui.animations.AnimationManager;
 import com.flat20.gui.animations.Splash;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
+import de.goddchen.android.fingerplay.BuildConfig;
 import de.goddchen.android.fingerplay.R;
 import org.json.JSONObject;
 
@@ -87,7 +88,8 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         Runtime r = Runtime.getRuntime();
         r.gc();
 
-        Toast info = Toast.makeText(this, "Go to http://thesundancekid.net/ for help.", Toast.LENGTH_LONG);
+        Toast info = Toast.makeText(this, "Go to http://goddchen.github.io/Fingerplay-Midi/ for help.",
+                Toast.LENGTH_LONG);
         info.show();
 
         // Sensor code
@@ -106,18 +108,25 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         mMidiWidgetsContainer.x = -mWidth;
         AnimationManager.getInstance().add(mwcSplash);
 
-        boolean result = bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND"),
-                mBillingServiceConnection, Context.BIND_AUTO_CREATE);
-        if (!result) {
-            unableToVerifyLicense("Unable to connect to billing service.\nSorry, but you won't be able to use the app."
-                    , false);
+        if (BuildConfig.DEBUG) {
+            if (TextUtils.isEmpty(PreferenceManager.getDefaultSharedPreferences(this)
+                    .getString("settings_server_address", null))) {
+                Toast.makeText(this, R.string.toast_server_not_setup, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getApplicationContext(), SettingsView.class));
+            }
+        } else {
+            boolean result = bindService(new Intent("com.android.vending.billing.InAppBillingService.BIND"),
+                    mBillingServiceConnection, Context.BIND_AUTO_CREATE);
+            if (!result) {
+                unableToVerifyLicense(getString(R.string.billing_error_init), false);
+            }
         }
     }
 
     private void unableToVerifyLicense(String message, boolean showSubscripeButton) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
-                .setMessage("Sorry, unable to check your subscription:\n" + message)
-                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.dialog_subs_check_failed, message))
+                .setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
@@ -125,7 +134,7 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
                 })
                 .setCancelable(false);
         if (showSubscripeButton) {
-            builder.setPositiveButton("Subscribe", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(getString(R.string.subscribe), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     subscribe();
@@ -142,11 +151,11 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
             if (bundle.getInt("RESPONSE_CODE") == 0) {
                 startIntentSenderForResult(pendingIntent.getIntentSender(), REQUEST_PURCHASE, new Intent(), 0, 0, 0);
             } else {
-                unableToVerifyLicense("Error during subscription process", true);
+                unableToVerifyLicense(getString(R.string.billing_error_during_process), true);
             }
         } catch (Exception e) {
             Log.e("Fingerplay", "Error subscribing", e);
-            unableToVerifyLicense("Error during subscription process", true);
+            unableToVerifyLicense(getString(R.string.billing_error_during_process), true);
         }
     }
 
@@ -157,7 +166,7 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
             if (resultCode == RESULT_OK && data.getIntExtra("RESPONSE_CODE", 1) == 0) {
                 checkPurchases();
             } else {
-                unableToVerifyLicense("Error during subscription process", true);
+                unableToVerifyLicense(getString(R.string.billing_error_during_process), true);
             }
         }
     }
@@ -176,44 +185,42 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
                             JSONObject jsonData = new JSONObject(ownedData.get(i));
                             int purchaseState = jsonData.getInt("purchaseState");
                             if (purchaseState == 0) {
-                                Toast.makeText(this, "Active subscription verified", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(this, R.string.toast_subs_verified, Toast.LENGTH_SHORT).show();
                                 if (TextUtils.isEmpty(PreferenceManager.getDefaultSharedPreferences(this)
                                         .getString("settings_server_address", null))) {
-                                    Toast.makeText(this, "You haven't setup a server yet.\nShowing settings!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, R.string.toast_server_not_setup, Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(getApplicationContext(), SettingsView.class));
                                 }
                             } else if (purchaseState == 1) {
-                                unableToVerifyLicense("Your subscription is cancelled", true);
+                                unableToVerifyLicense(getString(R.string.billing_error_cancelled), true);
                             } else if (purchaseState == 2) {
-                                unableToVerifyLicense("Your subscription was refunded", true);
+                                unableToVerifyLicense(getString(R.string.billing_error_refunded), true);
                             } else {
-                                unableToVerifyLicense("Unknown subscription state", true);
+                                unableToVerifyLicense(getString(R.string.billing_error_unknown_state), true);
                             }
                         }
                     }
                 }
             } else {
-                unableToVerifyLicense("Error checking for your subscription", true);
+                unableToVerifyLicense(getString(R.string.billing_error_unknown), true);
             }
         } catch (Exception e) {
             Log.e("Fingerplay", "Error checking for purchases", e);
-            unableToVerifyLicense("Error checking for your subscription", true);
+            unableToVerifyLicense(getString(R.string.billing_error_unknown), true);
         }
     }
 
     private void showSubscribeDialog() {
         new AlertDialog.Builder(this)
-                .setMessage("The only possible model of how to raise some money on the project so that I can invest some hours every month was a subscription model.\n\n"
-                        + "So if you really love this app, subscribe and enjoy the app and regular updates!\n\n"
-                        + "Please note that you have a 7 day trial period before you have pay anything!")
-                .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                .setMessage(getString(R.string.dialog_subs_message))
+                .setNegativeButton(getString(R.string.exit), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         finish();
                     }
                 })
                 .setCancelable(false)
-                .setPositiveButton("Subscribe", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.subscribe), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         subscribe();

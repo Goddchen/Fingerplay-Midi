@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">FingerPlay MIDI</string>
+    <string name="billing_error_init">Unable to connect to billing service.
+        Sorry, but you won\'t be able to use the app.
+    </string>
+    <string name="dialog_subs_check_failed">Sorry, unable to check your subscription:\n%s
+    </string>
+    <string name="exit">Exit</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="billing_error_during_process">Error during subscription process</string>
+    <string name="toast_subs_verified">Active subscription verified</string>
+    <string name="toast_server_not_setup">You haven\'t setup a server yet.
+        Showing settings!
+    </string>
+    <string name="billing_error_cancelled">Your subscription is cancelled</string>
+    <string name="billing_error_refunded">Your subscription was refunded</string>
+    <string name="billing_error_unknown_state">Unknown subscription state</string>
+    <string name="billing_error_unknown">Error checking for your subscription</string>
+    <string name="dialog_subs_message">
+        The only possible model of how to raise some money on the project so that I can invest some hours every month
+        was a subscription model.\n\n
+        So if you really love this app, subscribe and enjoy the app and regular updates!\n\n
+        Please note that you have a 7 day trial period before you have pay anything!
+    </string>
 </resources>
