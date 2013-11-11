@@ -3,7 +3,11 @@ package com.flat20.fingerplay;
 
 import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -15,6 +19,7 @@ import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.android.vending.billing.IInAppBillingService;
 import com.flat20.fingerplay.midicontrollers.MidiControllerManager;
 import com.flat20.fingerplay.network.ConnectionManager;
@@ -28,13 +33,18 @@ import com.flat20.gui.animations.Splash;
 import com.flat20.gui.sprites.Logo;
 import com.flat20.gui.widgets.MidiWidgetContainer;
 import com.google.analytics.tracking.android.EasyTracker;
-import de.goddchen.android.fingerplay.BuildConfig;
-import de.goddchen.android.fingerplay.R;
+import com.google.analytics.tracking.android.ExceptionParser;
+import com.google.analytics.tracking.android.Tracker;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import de.goddchen.android.fingerplay.BuildConfig;
+import de.goddchen.android.fingerplay.R;
 
 public class FingerPlayActivity extends InteractiveActivity implements SensorEventListener {
 
@@ -79,6 +89,15 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         super.onStart();
         if (!BuildConfig.DEBUG) {
             EasyTracker.getInstance().activityStart(this);
+            Tracker tracker = EasyTracker.getTracker();
+            if (tracker != null) {
+                tracker.setExceptionParser(new ExceptionParser() {
+                    @Override
+                    public String getDescription(String s, Throwable throwable) {
+                        return "Thread: " + s + ", Exception: " + ExceptionUtils.getStackTrace(throwable);
+                    }
+                });
+            }
         }
     }
 
@@ -265,7 +284,8 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         if (xmlFile != null && xmlFile.canRead())
             LayoutManager.loadXML(mMidiWidgetsContainer, xmlFile, mWidth, mHeight);
         else
-            LayoutManager.loadXML(mMidiWidgetsContainer, getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth, mHeight);
+            LayoutManager.loadXML(mMidiWidgetsContainer, getApplicationContext().getResources().openRawResource(R.raw.layout_default), mWidth,
+                    mHeight);
 
         // Add all midi controllers to the manager
         mMidiControllerManager.addMidiControllersIn(mMidiWidgetsContainer);
@@ -275,7 +295,8 @@ public class FingerPlayActivity extends InteractiveActivity implements SensorEve
         // Navigation
         // was 64 for 480
         int navigationWidth = (mWidth > 480) ? 80 : 64;
-        mNavigationOverlay = new NavigationOverlay(navigationWidth, mHeight - 16, mNavigationListener, mMidiWidgetsContainer, mMidiWidgetsContainer, mHeight);
+        mNavigationOverlay = new NavigationOverlay(navigationWidth, mHeight - 16, mNavigationListener, mMidiWidgetsContainer,
+                mMidiWidgetsContainer, mHeight);
         mNavigationOverlay.x = mWidth - mNavigationOverlay.width + 2;
         mNavigationOverlay.y = 8;//dm.heightPixels/2 - navigationScreen.height/2;
 
