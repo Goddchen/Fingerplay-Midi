@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FingerPlay MIDI</string>
+    <string name="billing_error_init">Não é possível conectar ao serviço de faturamento.
+       Desculpe, mas você não será capaz de usar o app.
+    </string>
+    <string name="dialog_subs_check_failed">Desculpe, não foi possivel verificar sua assinatura:\n%s
+    </string>
+    <string name="exit">Sair</string>
+    <string name="subscribe">Assinar</string>
+    <string name="billing_error_during_process">Erro durante o processo de assinatura</string>
+    <string name="toast_subs_verified">Assinatura ativa verificada</string>
+    <string name="toast_server_not_setup">Você ainda não configurou o servidor. Mostrar Configurações!</string>
+    <string name="billing_error_cancelled">Sua assinatura foi cancelada</string>
+    <string name="billing_error_refunded">Sua assinatura foi reembolsado</string>
+    <string name="billing_error_unknown_state">Estado da assinatura desconhecido</string>
+    <string name="billing_error_unknown">Verificação de erros para a sua assinatura</string>
+    <string name="dialog_subs_message">
+        O único modelo possível de como levantar algum dinheiro no projeto para que eu possa investir algumas horas a cada mês
+        era um modelo de assinatura.\n\n
+        Então, se você realmente ama este aplicativo, assine e desfrute da aplicação e atualizações regulares! \n\n
+        Por favor, note que você tem um período de teste de 7 dias antes de você terque pagar!
+    </string>
+</resources>
